@@ -4,7 +4,7 @@
 
 ## Project Initilization
 
-Upon opening this repository in VS Code it will prompt you to install recommended packages (Prettier, ESLint, Prisma, .. etc)
+Upon opening this repository in VS Code it will prompt you to install recommended extensions (Prettier, ESLint, Prisma, .. etc)
 
 You will also find VS Code workspace settings for formatting text and indentation already set up. As Well as running pre-commit hooks from npm/husky to run formatting and linting checks.
 
