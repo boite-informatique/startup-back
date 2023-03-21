@@ -5,5 +5,5 @@
     "editor.indentSize": "tabSize",
     "editor.tabSize": 4,
     "editor.detectIndentation": false,
-    "files.insertFinalNewline": false
+    "files.insertFinalNewline": true
 }
