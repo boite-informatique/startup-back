@@ -4,5 +4,6 @@
     "prettier.tabWidth": 4,
     "editor.indentSize": "tabSize",
     "editor.tabSize": 4,
-    "editor.detectIndentation": false
+    "editor.detectIndentation": false,
+    "files.insertFinalNewline": false
 }
