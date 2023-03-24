@@ -16,18 +16,17 @@ export class UsersService {
         }
         return users;
     }
-    async findQuerry(userQueryDto : UserQueryDto){
+    async findQuerry(userQueryDto: UserQueryDto) {
         const users = await this.prismaServive.user.findMany({
-            take : userQueryDto.take,
-            skip : userQueryDto.skip,
-            where :{
-                first_name : userQueryDto.first_name,
-                type : userQueryDto.type,
-                sex : userQueryDto.sex,
-            }}
-        )
+            take: userQueryDto.take,
+            skip: userQueryDto.skip,
+            where: {
+                first_name: userQueryDto.first_name,
+                type: userQueryDto.type,
+                sex: userQueryDto.sex,
+            },
+        });
     }
-    
 
     async findOne(id: number) {
         const user = await this.prismaServive.user.findUnique({
@@ -46,5 +45,4 @@ export class UsersService {
             data: updateUserDto,
         });
     }
-    
 }

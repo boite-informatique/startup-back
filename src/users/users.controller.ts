@@ -21,7 +21,7 @@ export class UsersController {
         return this.usersService.findAll();
     }
     @Get()
-    findQuerry(@Body() userQueryDto : UserQueryDto){
+    findQuerry(@Body() userQueryDto: UserQueryDto) {
         return this.usersService.findQuerry(userQueryDto);
     }
 
@@ -29,7 +29,6 @@ export class UsersController {
     findOne(@Param('id') id: string) {
         return this.usersService.findOne(+id);
     }
-    
 
     @Patch(':id')
     update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
