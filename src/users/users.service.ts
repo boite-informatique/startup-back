@@ -26,6 +26,7 @@ export class UsersService {
                 sex: userQueryDto.sex,
             },
         });
+        return users;
     }
 
     async findOne(id: number) {
@@ -44,5 +45,6 @@ export class UsersService {
             where: { id },
             data: updateUserDto,
         });
+        return user;
     }
 }
