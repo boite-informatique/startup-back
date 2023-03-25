@@ -9,21 +9,24 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @Get()
-    findAll():Promise<User[]>{
+    findAll(): Promise<User[]> {
         return this.usersService.findAll();
     }
     @Get()
-    findUsers(@Body() userQueryDto: UserQueryDto):Promise<User[]> {
+    findUsers(@Body() userQueryDto: UserQueryDto): Promise<User[]> {
         return this.usersService.findUsers(userQueryDto);
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string):Promise<User> {
+    findOne(@Param('id') id: string): Promise<User> {
         return this.usersService.findOne(+id);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) :Promise<User>{
+    update(
+        @Param('id') id: string,
+        @Body() updateUserDto: UpdateUserDto,
+    ): Promise<User> {
         return this.usersService.update(+id, updateUserDto);
     }
 }
