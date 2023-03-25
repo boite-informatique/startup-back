@@ -8,7 +8,7 @@ import { UsersController } from './users.controller';
 describe('UsersService', () => {
     let usersController: UsersController;
     let usersService: UsersService;
-    let prismaService: PrismaService;
+    
 
     const mockUser: User = {
         id: 1,
@@ -23,14 +23,14 @@ describe('UsersService', () => {
         type: 'Student',
     };
     beforeEach(async () => {
-        const moduleRef : TestingModule= await Test.createTestingModule({
+        const moduleRef: TestingModule = await Test.createTestingModule({
             controllers: [UsersController],
             providers: [UsersService, PrismaService],
         }).compile();
 
         usersController = moduleRef.get<UsersController>(UsersController);
         usersService = moduleRef.get<UsersService>(UsersService);
-        prismaService = moduleRef.get<PrismaService>(PrismaService);
+        
     });
 
     describe('findAll', () => {
