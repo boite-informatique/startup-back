@@ -8,7 +8,6 @@ import { UsersController } from './users.controller';
 describe('UsersService', () => {
     let usersController: UsersController;
     let usersService: UsersService;
-    
 
     const mockUser: User = {
         id: 1,
@@ -30,7 +29,6 @@ describe('UsersService', () => {
 
         usersController = moduleRef.get<UsersController>(UsersController);
         usersService = moduleRef.get<UsersService>(UsersService);
-       
     });
 
     describe('findAll', () => {
