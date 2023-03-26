@@ -1,20 +1,27 @@
-import { Optional } from '@nestjs/common';
-import { IsEnum, Max } from 'class-validator';
+import { Max, IsOptional, IsIn, IsInt, Min } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class UserQueryDto {
-    @Optional()
-    first_name?: string;
-    @Optional()
-    @IsEnum(['Teacher', 'Student', 'Stuff'], {
-        message: 'type can be either Teacher,Student or Stuff',
-    })
-    type?: 'Teacher' | 'Student' | 'Stuff';
-    @Optional()
-    @IsEnum(['Male', 'Female'], { message: 'sex can be either Male or Female' })
+    @IsOptional()
+    first_name: string;
+
+    @IsOptional()
+    @IsIn(['Teacher', 'Student', 'Staff'])
+    type?: 'Teacher' | 'Student' | 'Staff';
+
+    @IsOptional()
+    @IsIn(['Male', 'Female'])
     sex?: 'Male' | 'Female';
-    @Optional()
-    skip: number =0;
-    @Optional()
+
+    @IsInt()
+    @Type(() => Number)
+    @IsOptional()
+    skip: number = 0;
+
+    @IsInt()
+    @Type(() => Number)
+    @IsOptional()
     @Max(100)
-    take: number =25;
+    @Min(1)
+    take: number = 25;
 }
