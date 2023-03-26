@@ -31,8 +31,6 @@ describe('UsersService', () => {
         usersService = moduleRef.get<UsersService>(UsersService);
     });
 
-    
-    ////////////////////////////////////////////
     describe('findUsers', () => {
         it('should return an array of users', async () => {
             const userQueryDto = new UserQueryDto();
@@ -47,7 +45,7 @@ describe('UsersService', () => {
             ]);
         });
     });
-    ////////////////////////////////////////////
+
     describe('findOne', () => {
         it('should return a user by id', async () => {
             jest.spyOn(usersService, 'findOne').mockResolvedValue(mockUser);
@@ -55,7 +53,7 @@ describe('UsersService', () => {
             expect(await usersController.findOne('1')).toEqual(mockUser);
         });
     });
-    ////////////////////////////////////////////
+
     describe('update', () => {
         it('should update a user by id', async () => {
             jest.spyOn(usersService, 'update').mockResolvedValue(mockUser);

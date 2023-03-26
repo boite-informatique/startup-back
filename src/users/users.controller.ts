@@ -1,6 +1,5 @@
 import { Controller, Get, Body, Patch, Param, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { ApiTags } from '@nestjs/swagger';

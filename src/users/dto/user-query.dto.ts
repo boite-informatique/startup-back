@@ -16,12 +16,12 @@ export class UserQueryDto {
     @IsInt()
     @Type(() => Number)
     @IsOptional()
-    skip: number = 0;
+    skip = 0;
 
     @IsInt()
     @Type(() => Number)
     @IsOptional()
     @Max(100)
     @Min(1)
-    take: number = 25;
+    take = 25;
 }
