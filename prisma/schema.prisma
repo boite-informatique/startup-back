@@ -11,7 +11,7 @@ datasource db {
 }
  
 
-model Roles{
+model Role{
   id  Int @id @default(autoincrement())
   name String @unique
   users User[]
@@ -21,7 +21,7 @@ model Roles{
 model Permission {
   id Int @id @default(autoincrement())
   name String @unique
-  roles Roles[]
+  roles Role[]
 
 }
 
@@ -38,7 +38,7 @@ model User{
   type  UserType
   student Student?  
   teacher Teacher?
-  roles Roles[]  
+  roles Role[]  
   
 }
 
