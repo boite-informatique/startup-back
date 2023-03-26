@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
@@ -9,25 +8,27 @@ import { UserNotFoundException } from './exceptions/userNotFound.exception';
 export class UsersService {
     constructor(private readonly prismaServive: PrismaService) {}
 
-    
-    async findUsers(userQueryDto: UserQueryDto): Promise<User[]> {
+    async findUsers(userQueryDto: UserQueryDto) {
         const users = await this.prismaServive.user.findMany({
             take: userQueryDto.take,
             skip: userQueryDto.skip,
             where: {
-                first_name: { contains: userQueryDto.first_name },
+                first_name: {
+                    contains: userQueryDto.first_name,
+                    mode: 'insensitive',
+                },
                 type: { equals: userQueryDto.type },
                 sex: { equals: userQueryDto.sex },
             },
         });
-        if (!users) {
+        if (users.length === 0) {
             throw new UserNotFoundException();
         }
 
         return users;
     }
 
-    async findOne(id: number): Promise<User> {
+    async findOne(id: number) {
         const user = await this.prismaServive.user.findUnique({
             where: { id },
         });
@@ -38,7 +39,7 @@ export class UsersService {
         return user;
     }
 
-    async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    async update(id: number, updateUserDto: UpdateUserDto) {
         const user = await this.prismaServive.user.update({
             where: { id },
             data: updateUserDto,
