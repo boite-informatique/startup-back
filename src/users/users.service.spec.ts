@@ -31,13 +31,7 @@ describe('UsersService', () => {
         usersService = moduleRef.get<UsersService>(UsersService);
     });
 
-    describe('findAll', () => {
-        it('should return an array of users', async () => {
-            jest.spyOn(usersService, 'findAll').mockResolvedValue([mockUser]);
-
-            expect(await usersController.findAll()).toEqual([mockUser]);
-        });
-    });
+    
     ////////////////////////////////////////////////////
     describe('findUsers', () => {
         it('should return an array of users', async () => {
@@ -70,5 +64,5 @@ describe('UsersService', () => {
                 mockUser,
             );
         });
-    });
+        });
 });

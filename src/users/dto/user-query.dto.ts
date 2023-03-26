@@ -13,8 +13,8 @@ export class UserQueryDto {
     @IsEnum(['Male', 'Female'], { message: 'sex can be either Male or Female' })
     sex?: 'Male' | 'Female';
     @Optional()
-    skip: number;
+    skip: number =0;
     @Optional()
     @Max(100)
-    take: number;
+    take: number =25;
 }

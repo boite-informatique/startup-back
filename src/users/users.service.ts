@@ -9,13 +9,7 @@ import { UserNotFoundException } from './exceptions/userNotFound.exception';
 export class UsersService {
     constructor(private readonly prismaServive: PrismaService) {}
 
-    async findAll(): Promise<User[]> {
-        const users = await this.prismaServive.user.findMany();
-        if (!users) {
-            throw new UserNotFoundException();
-        }
-        return users;
-    }
+    
     async findUsers(userQueryDto: UserQueryDto): Promise<User[]> {
         const users = await this.prismaServive.user.findMany({
             take: userQueryDto.take,
