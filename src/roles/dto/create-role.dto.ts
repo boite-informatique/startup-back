@@ -1,9 +1,10 @@
 import { User, Permission } from '@prisma/client';
 import { Type } from 'class-transformer';
-import {CreateUserDto} from 'src/users/dto/create-user.dto'
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { CreatePermissionDto } from 'src/permissions/dto/create-permission.dto';
-   
-import {IsNotEmpty,
+
+import {
+    IsNotEmpty,
     IsOptional,
     IsString,
     ValidateNested,

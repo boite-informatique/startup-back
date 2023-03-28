@@ -16,16 +16,16 @@ import { Role } from '@prisma/client';
 export class RolesController {
     constructor(private readonly rolesService: RolesService) {}
     @Post()
-    async createRole(@Body() createRoleDto:CreateRoleDto){
-        return await this.rolesService.createRole(createRoleDto)
+    async createRole(@Body() createRoleDto: CreateRoleDto) {
+        return await this.rolesService.createRole(createRoleDto);
     }
     @Get()
     async findAllRoles() {
         return await this.rolesService.findAllRoles();
     }
     @Get(':id')
-    async findOneRole(@Param('id') id: string){
-        return await this.rolesService.findOneRole(+id)
+    async findOneRole(@Param('id') id: string) {
+        return await this.rolesService.findOneRole(+id);
     }
     @Get('/users/:id')
     async findRoleUsers(@Param('id') id: string) {
@@ -38,11 +38,12 @@ export class RolesController {
     @Patch(':id')
     async updateRole(
         @Param('id') id: string,
-        @Body() updateRoleDto: UpdateRoleDto,){
-            return await this.rolesService.updateRole(+id,updateRoleDto)
-        }
+        @Body() updateRoleDto: UpdateRoleDto,
+    ) {
+        return await this.rolesService.updateRole(+id, updateRoleDto);
+    }
     @Delete(':id')
-    async deleteRole(@Param('id') id: string){
-        return await this.rolesService.deleteRole(+id)
+    async deleteRole(@Param('id') id: string) {
+        return await this.rolesService.deleteRole(+id);
     }
 }

@@ -9,27 +9,22 @@ export class RolesService {
     constructor(private readonly prismaService: PrismaService) {}
 
     ///////////////////
- async createRole(data:CreateRoleDto):Promise<Role> {
-    
-   
-
+    async createRole(data: CreateRoleDto): Promise<Role> {
         const role = await this.prismaService.role.create({
-          data: {
-         name : data.name
-          },
+            data: {
+                name: data.name,
+            },
         });
-   return role;
-}
+        return role;
+    }
     /////////////////////////////////////////////////////////
     async findAllRoles(): Promise<Role[]> {
         return await this.prismaService.role.findMany();
     }
     //////////////////////////////////////
-      async findOneRole(id: number): Promise<Role>{
-
-        return await this.prismaService.role.findUnique({where:{id},})
-      }
-
+    async findOneRole(id: number): Promise<Role> {
+        return await this.prismaService.role.findUnique({ where: { id } });
+    }
 
     ////////////////////////
     async findRoleUsers(id: number): Promise<User[]> {
@@ -44,18 +39,15 @@ export class RolesService {
             .permissions();
     }
     ////////////////////////////////////////////////:
-    async updateRole(id:number,data:UpdateRoleDto):Promise<Role> {
-    
-   
-
+    async updateRole(id: number, data: UpdateRoleDto): Promise<Role> {
         const role = await this.prismaService.role.update({
-            where:{id},
-          data: {
-         name : data.name
-          },
+            where: { id },
+            data: {
+                name: data.name,
+            },
         });
-   return role;
-}
+        return role;
+    }
     ////////////////////////////////////////////////:::
     async deleteRole(id: number) {
         return await this.prismaService.role.delete({
