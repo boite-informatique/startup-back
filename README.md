@@ -11,10 +11,10 @@ You will also find VS Code workspace settings for formatting text and indentatio
 ## Installation
 
 ```bash
-$ npm install && npm run prepare
+$ npm install && npm run prepare && mv .env.example .env
 ```
 
-## Running the app
+## Running The App
 
 ```bash
 # development
@@ -25,6 +25,21 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
+```
+
+## Running The Dev Database
+
+Make sure to have `docker` and `docker-compose` installed.
+
+```bash
+# cd to prisma directory
+$ cd prisma
+
+# start the database
+$ docker-compose up
+
+# start the database in background
+$ docker-compose up -d
 ```
 
 ## Test
