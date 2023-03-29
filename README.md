@@ -11,7 +11,9 @@ You will also find VS Code workspace settings for formatting text and indentatio
 ## Installation
 
 ```bash
-$ npm install && npm run prepare && mv .env.example .env
+$ npm install && npm run prepare
+$ mv env.example .env
+$ npx prisma generate
 ```
 
 ## Running The App
