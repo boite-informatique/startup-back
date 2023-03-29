@@ -1,20 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { verifyHash } from 'src/common/crypto';
 import { PrismaService } from '../prisma.service';
-import { UpdateUserDto } from '../users/dto/update-user.dto';
-import { UserQueryDto } from '../users/dto/user-query.dto';
-import { UserNotFoundException } from '../users/exceptions/userNotFound.exception';
+import { LoginDto } from './dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
+
+type loginOutput = { token: string };
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly prismaServive: PrismaService) {}
+    constructor(
+        private readonly prismaServive: PrismaService,
+        private readonly jwtService: JwtService,
+    ) {}
 
-    async validateUser(email: string, password: string): Promise<any> {
-        const user = await this.findOne(email);
-        if (user && user.password === password) {
-            const { password, ...result } = user;
-            return result;
+    async login(loginDto: LoginDto): Promise<loginOutput> {
+        const user = await this.findOne(loginDto.email);
+
+        if (!user || !(await verifyHash(loginDto.password, user.password))) {
+            throw new UnauthorizedException('Email or Password incorrect');
         }
-        return null;
+
+        const token = await this.jwtService.signAsync({ sub: user.id });
+
+        return { token };
     }
 
     async findOne(email: string) {
