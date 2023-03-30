@@ -3,6 +3,8 @@ import { PrismaService } from '../prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { UserNotFoundException } from './exceptions/userNotFound.exception';
+import { Request } from 'express';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -27,7 +29,7 @@ export class UsersService {
 
         return users;
     }
-
+   
     async findOne(id: number) {
         const user = await this.prismaServive.user.findUnique({
             where: { id },
@@ -46,4 +48,6 @@ export class UsersService {
         });
         return user;
     }
+
+    
 }
