@@ -24,8 +24,7 @@ export class RolesService {
     /////////////////////////////////////////////////////////
     async findAllRoles(): Promise<Role[]> {
         return await this.prismaService.role.findMany({
-            include: { permissions : true },
-        
+            include: { permissions: true },
         });
     }
     //////////////////////////////////////
