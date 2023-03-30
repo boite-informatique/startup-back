@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Role, User, Permission } from '@prisma/client';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../prisma.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 
@@ -24,7 +24,8 @@ export class RolesService {
     /////////////////////////////////////////////////////////
     async findAllRoles(): Promise<Role[]> {
         return await this.prismaService.role.findMany({
-            include: { permissions: true },
+            include: { permissions : true },
+        
         });
     }
     //////////////////////////////////////
