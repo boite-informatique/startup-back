@@ -4,6 +4,7 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { CreatePermissionDto } from 'src/permissions/dto/create-permission.dto';
 
 import {
+    IsInt,
     IsNotEmpty,
     IsOptional,
     IsString,
@@ -11,15 +12,13 @@ import {
 } from 'class-validator';
 
 export class CreateRoleDto {
-    @IsNotEmpty()
+    
     @IsString()
     name: string;
-
-    /*@ValidateNested({ each: true })
-    @Type(() => CreateUserDto)
-    users: CreateUserDto[];
-  
-    @ValidateNested({ each: true })
-    @Type(() => CreatePermissionDto)
-    permissions: CreatePermissionDto[];*/
+    @IsInt({each:true})
+    users : any[];
+    @IsInt({each:true})
+    permissions:any[];
+    
+   
 }
