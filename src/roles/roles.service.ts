@@ -11,17 +11,21 @@ export class RolesService {
     ///////////////////
     async createRole(data: CreateRoleDto): Promise<Role> {
         const role = await this.prismaService.role.create({
-            data:{
-                name : data.name,
-                users :{connect :data.users.map(u=>({id:u}))},
-                permissions:{connect :data.permissions.map(u=>({id:u}))},
-            }
+            data: {
+                name: data.name,
+                users: { connect: data.users.map((u) => ({ id: u })) },
+                permissions: {
+                    connect: data.permissions.map((u) => ({ id: u })),
+                },
+            },
         });
         return role;
     }
     /////////////////////////////////////////////////////////
     async findAllRoles(): Promise<Role[]> {
-        return await this.prismaService.role.findMany({include :{permissions:true}});
+        return await this.prismaService.role.findMany({
+            include: { permissions: true },
+        });
     }
     //////////////////////////////////////
     async findOneRole(id: number): Promise<Role> {
@@ -44,11 +48,13 @@ export class RolesService {
     async updateRole(id: number, data: UpdateRoleDto): Promise<Role> {
         const role = await this.prismaService.role.update({
             where: { id },
-            data:{
-                name : data.name,
-                users :{connect :data.users.map(u=>({id:u}))},
-                permissions:{connect :data.permissions.map(u=>({id:u}))},
-            }
+            data: {
+                name: data.name,
+                users: { connect: data.users.map((u) => ({ id: u })) },
+                permissions: {
+                    connect: data.permissions.map((u) => ({ id: u })),
+                },
+            },
         });
         return role;
     }
