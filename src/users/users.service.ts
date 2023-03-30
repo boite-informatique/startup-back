@@ -29,7 +29,7 @@ export class UsersService {
 
         return users;
     }
-   
+
     async findOne(id: number) {
         const user = await this.prismaServive.user.findUnique({
             where: { id },
@@ -48,6 +48,4 @@ export class UsersService {
         });
         return user;
     }
-
-    
 }
