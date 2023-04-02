@@ -1,40 +1,29 @@
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+import { generateHash } from 'src/common/crypto';
 
 const prisma = new PrismaClient();
-
-async function main() {
-    // Generate mock data using the faker library
-    function GenerateUser() {
-        return {
-            email: faker.internet.email(),
-            password: faker.internet.password(),
-            first_name: faker.name.firstName(),
-            last_name: faker.name.lastName(),
-            middle_name: faker.name.middleName(),
-            date_of_birth: faker.date.birthdate(),
-            location_of_birth: faker.address.city(),
-            sex: faker.helpers.arrayElement(['Male', 'Female']),
-            type: faker.helpers.arrayElement(['Teacher', 'Student', 'Staff']),
-        };
+async function seedData(numRecords: number) {
+    for (let i = 0; i < numRecords; i++) {
+        const pass = generateHash('Pass123#');
+        await prisma.user.create({
+            data: {
+                email: faker.internet.email(),
+                password: await pass,
+                first_name: faker.name.firstName(),
+                last_name: faker.name.lastName(),
+                middle_name: faker.name.middleName(),
+                date_of_birth: faker.date.birthdate(),
+                location_of_birth: faker.address.city(),
+                sex: faker.helpers.arrayElement(['Male', 'Female']),
+                type: faker.helpers.arrayElement([
+                    'Teacher',
+                    'Student',
+                    'Staff',
+                ]),
+            },
+        });
     }
-
-    function GenerateUsers(num: number) {
-        const users = [];
-        for (let i = 0; i < num; i++) {
-            users.push(GenerateUser());
-        }
-        return users;
-    }
-    const users = GenerateUsers(10);
-    console.log(users);
+    return console.log('sedding');
 }
-
-main()
-    .catch((error) => {
-        console.error(error);
-        process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+seedData(4);
