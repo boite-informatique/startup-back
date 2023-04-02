@@ -1,27 +1,27 @@
-import { Max, IsOptional, IsIn, IsInt, Min } from 'class-validator';
+import { Max, IsOptional, IsIn, IsInt, Min, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
+import { UserType } from '.prisma/client';
+import { PartialType } from '@nestjs/swagger';
 
-export class UserQueryDto {
-    @IsOptional()
+class UserQueryDtoDef {
+    @IsString()
     first_name: string;
 
-    @IsOptional()
     @IsIn(['Teacher', 'Student', 'Staff'])
-    type?: 'Teacher' | 'Student' | 'Staff';
+    type?: UserType;
 
-    @IsOptional()
     @IsIn(['Male', 'Female'])
     sex?: 'Male' | 'Female';
 
     @IsInt()
     @Type(() => Number)
-    @IsOptional()
-    skip = 0;
+    skip: number = 0;
 
     @IsInt()
     @Type(() => Number)
-    @IsOptional()
     @Max(100)
     @Min(1)
-    take = 25;
+    take: number = 25;
 }
+
+export class UserQueryDto extends PartialType(UserQueryDtoDef) {}

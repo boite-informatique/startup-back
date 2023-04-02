@@ -14,6 +14,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionsService } from 'src/permissions/permissions.service';
+import { UserOutput, UserOutputWithRelations } from './dto/user-output.dto';
+import { PermissionsOutput } from 'src/permissions/dto/permissions-output.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -24,12 +26,14 @@ export class UsersController {
     ) {}
 
     @Get()
-    async findUsers(@Query() userQueryDto: UserQueryDto) {
+    async findUsers(
+        @Query() userQueryDto: UserQueryDto,
+    ): Promise<UserOutput[]> {
         return await this.usersService.findUsers(userQueryDto);
     }
 
     @Get('permissions')
-    async findCurrentUserPermissions(@Req() req) {
+    async findCurrentUserPermissions(@Req() req): Promise<PermissionsOutput[]> {
         const permissions = await this.permissionService.findUserPermissions(
             +req.user.userId,
         );
@@ -41,8 +45,13 @@ export class UsersController {
         return permissions;
     }
 
+    @Get('me')
+    async getCurrentUser(@Req() req): Promise<UserOutputWithRelations> {
+        return await this.usersService.findOne(+req.user.userId);
+    }
+
     @Get(':id')
-    async findOne(@Param('id') id: string) {
+    async findOne(@Param('id') id: string): Promise<UserOutputWithRelations> {
         return await this.usersService.findOne(+id);
     }
 
@@ -51,7 +60,7 @@ export class UsersController {
         @Param('id') id: string,
         @Body() updateUserDto: UpdateUserDto,
         @Req() req,
-    ) {
+    ): Promise<UserOutput> {
         const userId: number = +req.user.userId;
         if (
             +id !== userId &&
