@@ -7,6 +7,6 @@ export class PermissionsController {
 
     @Get()
     async findAll() {
-        return await this.permissionsService.findAll();
+        return await this.permissionsService.findAllPermissions();
     }
 }

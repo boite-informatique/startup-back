@@ -7,6 +7,7 @@ import {
     Query,
     Req,
     NotFoundException,
+    ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -49,7 +50,18 @@ export class UsersController {
     async update(
         @Param('id') id: string,
         @Body() updateUserDto: UpdateUserDto,
+        @Req() req,
     ) {
+        const userId: number = +req.user.userId;
+        if (
+            +id !== userId &&
+            !(await this.permissionService.checkUserPermission(
+                userId,
+                'canManageAll',
+            ))
+        ) {
+            throw new ForbiddenException();
+        }
         return await this.usersService.update(+id, updateUserDto);
     }
 }

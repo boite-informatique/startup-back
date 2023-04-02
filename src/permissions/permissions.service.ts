@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma.service';
 export class PermissionsService {
     constructor(private readonly prismaService: PrismaService) {}
 
-    async findAll() {
+    async findAllPermissions() {
         const permissions = await this.prismaService.permission.findMany();
         if (permissions.length === 0) {
             throw new NotFoundException();
@@ -28,5 +28,11 @@ export class PermissionsService {
                 },
             },
         });
+    }
+
+    async checkUserPermission(userId: number, permissionName: string) {
+        const permissions = await this.findUserPermissions(userId);
+
+        return permissions.some((perm) => perm.name == permissionName);
     }
 }
