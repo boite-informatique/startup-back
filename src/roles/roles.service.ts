@@ -8,7 +8,6 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 export class RolesService {
     constructor(private readonly prismaService: PrismaService) {}
 
-    ///////////////////
     async createRole(data: CreateRoleDto): Promise<Role> {
         const role = await this.prismaService.role.create({
             data: {
@@ -21,44 +20,51 @@ export class RolesService {
         });
         return role;
     }
-    /////////////////////////////////////////////////////////
+
     async findAllRoles(): Promise<Role[]> {
         return await this.prismaService.role.findMany({
             include: { permissions: true },
         });
     }
-    //////////////////////////////////////
+
     async findOneRole(id: number): Promise<Role> {
-        return await this.prismaService.role.findUnique({ where: { id } });
+        return await this.prismaService.role.findUnique({
+            where: { id },
+            include: { permissions: true },
+        });
     }
 
-    ////////////////////////
     async findRoleUsers(id: number): Promise<User[]> {
         return await this.prismaService.role
             .findUnique({ where: { id } })
             .users();
     }
-    //////////////////////////////////////
+
     async findRolePermisions(id: number): Promise<Permission[]> {
         return await this.prismaService.role
             .findUnique({ where: { id } })
             .permissions();
     }
-    ////////////////////////////////////////////////:
+
     async updateRole(id: number, data: UpdateRoleDto): Promise<Role> {
         const role = await this.prismaService.role.update({
             where: { id },
             data: {
                 name: data.name,
-                users: { connect: data.users.map((u) => ({ id: u })) },
+                users: {
+                    set: data.users?.length > 0 ? [] : undefined,
+                    connect: data.users?.map((u) => ({ id: u })),
+                },
                 permissions: {
-                    connect: data.permissions.map((u) => ({ id: u })),
+                    set: data.permissions?.length > 0 ? [] : undefined,
+                    connect: data.permissions?.map((u) => ({ id: u })),
                 },
             },
+            include: { permissions: true },
         });
         return role;
     }
-    ////////////////////////////////////////////////:::
+
     async deleteRole(id: number) {
         return await this.prismaService.role.delete({
             where: { id },

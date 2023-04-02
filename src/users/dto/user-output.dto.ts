@@ -1,4 +1,5 @@
-import { Role, Sexe, UserType } from '.prisma/client';
+import { Sexe, UserType } from '.prisma/client';
+import { Role } from 'src/roles/dto/role-output.dto';
 
 export class UserOutput {
     id: number;
