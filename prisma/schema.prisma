@@ -75,7 +75,7 @@ model Teacher{
   user User @relation(fields: [user_id], references: [id])
   domain String
   academic_rank String
-  establishement String[]
+  establishement String
  
 }
  
