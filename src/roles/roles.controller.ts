@@ -17,7 +17,7 @@ import { PermissionsGuard } from 'src/permissions/guards/permissions.guard';
 import { RequirePermissions } from 'src/permissions/decorators/required-permissions.decorator';
 
 @ApiTags('roles')
-// @UseGuards(PermissionsGuard)
+@UseGuards(PermissionsGuard)
 @RequirePermissions('canManageAll')
 @Controller('roles')
 export class RolesController {
