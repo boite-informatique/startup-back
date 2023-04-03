@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { generateHash } from 'src/common/crypto';
 import { PrismaService } from '../prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
@@ -41,9 +42,17 @@ export class UsersService {
     }
 
     async update(id: number, updateUserDto: UpdateUserDto) {
+        const { email, password, roles } = updateUserDto;
         const user = await this.prismaServive.user.update({
             where: { id },
-            data: updateUserDto,
+            data: {
+                email,
+                password: await generateHash(password),
+                roles: {
+                    set: roles?.length > 0 ? [] : undefined,
+                    connect: roles?.map((r) => ({ id: r })),
+                },
+            },
         });
         return user;
     }
