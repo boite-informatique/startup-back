@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { generateHash } from 'src/common/crypto';
 import { PrismaService } from '../prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -56,5 +56,17 @@ export class UsersService {
             },
         });
         return user;
+    }
+
+    async findUserRoles(userId: number) {
+        const userRoles = await this.prismaServive.user
+            .findUnique({ where: { id: userId } })
+            .roles();
+
+        if (userRoles == null || userRoles.length === 0) {
+            throw new NotFoundException('Roles not found.');
+        }
+
+        return userRoles;
     }
 }

@@ -16,6 +16,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { PermissionsService } from 'src/permissions/permissions.service';
 import { UserOutput, UserOutputWithRelations } from './dto/user-output.dto';
 import { PermissionsOutput } from 'src/permissions/dto/permissions-output.dto';
+import { Role } from 'src/roles/dto/role-output.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -53,6 +54,11 @@ export class UsersController {
     @Get(':id')
     async findOne(@Param('id') id: string): Promise<UserOutputWithRelations> {
         return await this.usersService.findOne(+id);
+    }
+
+    @Get(':id/roles')
+    async findUserRoles(@Param('id') id: string): Promise<Role[]> {
+        return await this.usersService.findUserRoles(+id);
     }
 
     @Patch(':id')
