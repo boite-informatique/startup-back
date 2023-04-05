@@ -36,7 +36,7 @@ model User{
   location_of_birth String
   sex Sexe
   type  UserType
-  activated Boolean
+  activated Boolean @default(true)
   student Student?  
   teacher Teacher?
   roles Role[]  
