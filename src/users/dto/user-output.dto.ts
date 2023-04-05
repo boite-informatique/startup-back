@@ -12,26 +12,14 @@ export class UserOutput {
     location_of_birth: string;
     sex: Sexe;
     type: UserType;
-    activated: Boolean;
+    activated: boolean;
 }
 
-export class UserOutputWithRelations {
-    id: number;
-    email: string;  
-    password: string;
-    first_name: string;
-    last_name: string;
-    middle_name: string;
-    date_of_birth: Date;
-    location_of_birth: string;
-    sex: Sexe;
-    type: UserType;
-    activated: Boolean;
+export class UserOutputWithRelations extends UserOutput {
     teacher?: Teacher;
     student?: Student;
     roles: Role[];
 }
-
 
 class Teacher {
     id: number;
