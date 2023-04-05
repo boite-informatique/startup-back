@@ -42,7 +42,7 @@ export class UsersService {
     }
 
     async update(id: number, updateUserDto: UpdateUserDto) {
-        const { email, password, roles } = updateUserDto;
+        const { email, password, roles, activated} = updateUserDto;
         const user = await this.prismaServive.user.update({
             where: { id },
             data: {
@@ -52,6 +52,7 @@ export class UsersService {
                     set: roles?.length > 0 ? [] : undefined,
                     connect: roles?.map((r) => ({ id: r })),
                 },
+                activated,
             },
         });
         return user;

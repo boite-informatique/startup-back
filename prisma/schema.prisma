@@ -36,10 +36,10 @@ model User{
   location_of_birth String
   sex Sexe
   type  UserType
+  activated Boolean
   student Student?  
   teacher Teacher?
   roles Role[]  
-  
 }
 
 enum UserType {

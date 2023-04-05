@@ -1,4 +1,4 @@
-import { Sexe, UserType } from '.prisma/client';
+import { Sexe, UserType } from '@prisma/client';
 import { Role } from 'src/roles/dto/role-output.dto';
 
 export class UserOutput {
@@ -12,11 +12,12 @@ export class UserOutput {
     location_of_birth: string;
     sex: Sexe;
     type: UserType;
+    activated: Boolean;
 }
 
 export class UserOutputWithRelations {
     id: number;
-    email: string;
+    email: string;  
     password: string;
     first_name: string;
     last_name: string;
@@ -25,10 +26,12 @@ export class UserOutputWithRelations {
     location_of_birth: string;
     sex: Sexe;
     type: UserType;
+    activated: Boolean;
     teacher?: Teacher;
     student?: Student;
     roles: Role[];
 }
+
 
 class Teacher {
     id: number;
