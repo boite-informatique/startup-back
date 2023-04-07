@@ -5,7 +5,7 @@ import { Public } from './decorators/public.decorator';
 import { LoginDto } from './dto/login.dto';
 
 @ApiTags('Authentication')
-@Controller('authentication')
+@Controller('auth')
 export class AuthenticationController {
     constructor(
         private readonly authenticationService: AuthenticationService,

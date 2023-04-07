@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
 import { HashingService } from './hashing/hashing/hashing.service';
-import { AuthenticationController } from './authentication/authentication.controller';
-import { AuthenticationService } from './authentication/authentication.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { AuthenticationModule } from './authentication/authentication.module';
 
 @Module({
-    providers: [HashingService, AuthenticationService],
-    controllers: [AuthenticationController],
+    providers: [HashingService],
     exports: [HashingService],
-    imports: [PrismaModule],
+    imports: [PrismaModule, AuthenticationModule],
 })
 export class IamModule {}
