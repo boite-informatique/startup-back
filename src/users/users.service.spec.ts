@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { UserQueryDto } from './dto/user-query.dto';
 import { User } from '@prisma/client';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { UsersController } from './users.controller';
 
 describe('UsersService', () => {

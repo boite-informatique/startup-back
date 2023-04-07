@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { JwtAuthGuard } from './auth/jwt-auth/jwt-auth.guard';
 import { IamModule } from './iam/iam.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
     imports: [
@@ -13,6 +14,7 @@ import { IamModule } from './iam/iam.module';
         PermissionsModule,
         RolesModule,
         IamModule,
+        PrismaModule,
     ],
     providers: [
         {
