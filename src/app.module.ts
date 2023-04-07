@@ -7,7 +7,13 @@ import { JwtAuthGuard } from './auth/jwt-auth/jwt-auth.guard';
 import { IamModule } from './iam/iam.module';
 
 @Module({
-    imports: [UsersModule, AuthModule, PermissionsModule, RolesModule, IamModule],
+    imports: [
+        UsersModule,
+        AuthModule,
+        PermissionsModule,
+        RolesModule,
+        IamModule,
+    ],
     providers: [
         {
             provide: 'APP_GUARD',
