@@ -21,6 +21,7 @@ export class UsersService {
                 type: { equals: userQueryDto.type },
                 sex: { equals: userQueryDto.sex },
             },
+            include: { roles: true },
         });
         if (users.length === 0) {
             throw new UserNotFoundException();
