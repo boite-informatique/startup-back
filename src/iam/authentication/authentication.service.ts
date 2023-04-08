@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { HashingService } from '../hashing/hashing/hashing.service';
+import { HashingService } from '../hashing/hashing.service';
 import { loginOutputDto } from './dto/login-output.dto';
 import { LoginDto } from './dto/login.dto';
 

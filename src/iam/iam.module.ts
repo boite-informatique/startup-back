@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { HashingService } from './hashing/hashing/hashing.service';
+import { HashingService } from './hashing/hashing.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 

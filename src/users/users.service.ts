@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { HashingService } from 'src/iam/hashing/hashing/hashing.service';
+import { HashingService } from 'src/iam/hashing/hashing.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
@@ -47,19 +47,25 @@ export class UsersService {
 
     async update(id: number, updateUserDto: UpdateUserDto) {
         const { email, password, roles, activated } = updateUserDto;
-        const user = await this.prismaServive.user.update({
-            where: { id },
-            data: {
-                email,
-                password: await this.hashingService.generate(password),
-                roles: {
-                    set: roles?.length > 0 ? [] : undefined,
-                    connect: roles?.map((r) => ({ id: r })),
+        try {
+            const user = await this.prismaServive.user.update({
+                where: { id },
+                data: {
+                    email,
+                    password: password
+                        ? await this.hashingService.generate(password)
+                        : undefined,
+                    roles: {
+                        set: roles?.length > 0 ? [] : undefined,
+                        connect: roles?.map((r) => ({ id: r })),
+                    },
+                    activated,
                 },
-                activated,
-            },
-        });
-        return user;
+            });
+            return user;
+        } catch (e) {
+            throw new NotFoundException();
+        }
     }
 
     async findUserRoles(userId: number) {
