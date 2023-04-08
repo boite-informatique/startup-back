@@ -1,27 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
-import { generateHash } from '../src/common/crypto';
 
 const academicRanks = ['Assistant Professor', 'Professor', 'Lecturer'];
 const domains = ['MI', 'ST', 'ECO'];
 const prisma = new PrismaClient();
 async function seedData(numRecords: number) {
-    const pass = await generateHash('Pass123#');
-
-    try {
-        await prisma.permission.create({
-            data: {
-                name: 'canManageAll',
-                roles: {
-                    connectOrCreate: {
-                        where: { name: 'admin' },
-                        create: { name: 'admin' },
-                    },
-                },
-            },
-        });
-    } catch (err) {}
-
+    const pass = '$2b$10$2grmJNpdMlqCFkCWX11WvuYwe3PMZcNlA4P0ozVjt8iu0i./AIsIW'; // 'Pass123#' hashed
     for (let i = 0; i < numRecords; i++) {
         await prisma.user.create({
             data: {

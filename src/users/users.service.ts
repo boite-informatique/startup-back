@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { generateHash } from 'src/common/crypto';
+import { HashingService } from 'src/iam/hashing/hashing/hashing.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
@@ -7,7 +7,10 @@ import { UserNotFoundException } from './exceptions/userNotFound.exception';
 
 @Injectable()
 export class UsersService {
-    constructor(private readonly prismaServive: PrismaService) {}
+    constructor(
+        private readonly prismaServive: PrismaService,
+        private readonly hashingService: HashingService,
+    ) {}
 
     async findUsers(userQueryDto: UserQueryDto) {
         const users = await this.prismaServive.user.findMany({
@@ -48,7 +51,7 @@ export class UsersService {
             where: { id },
             data: {
                 email,
-                password: await generateHash(password),
+                password: await this.hashingService.generate(password),
                 roles: {
                     set: roles?.length > 0 ? [] : undefined,
                     connect: roles?.map((r) => ({ id: r })),
