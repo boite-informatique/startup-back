@@ -2,13 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { Role, User, Permission } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRoleDto } from './dto/create-role.dto';
+import { RoleWithPermissionsAndUserCount } from './dto/role-output.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Injectable()
 export class RolesService {
     constructor(private readonly prismaService: PrismaService) {}
 
-    async createRole(data: CreateRoleDto): Promise<Role> {
+    async createRole(
+        data: CreateRoleDto,
+    ): Promise<RoleWithPermissionsAndUserCount> {
         const role = await this.prismaService.role.create({
             data: {
                 name: data.name,
@@ -17,21 +20,36 @@ export class RolesService {
                     connect: data.permissions.map((u) => ({ id: u })),
                 },
             },
-            include: { users: true, permissions: true },
+            select: {
+                id: true,
+                name: true,
+                permissions: true,
+                _count: true,
+            },
         });
         return role;
     }
 
-    async findAllRoles(): Promise<Role[]> {
+    async findAllRoles(): Promise<RoleWithPermissionsAndUserCount[]> {
         return await this.prismaService.role.findMany({
-            include: { permissions: true, users: true },
+            select: {
+                id: true,
+                name: true,
+                permissions: true,
+                _count: true,
+            },
         });
     }
 
-    async findOneRole(id: number): Promise<Role> {
+    async findOneRole(id: number): Promise<RoleWithPermissionsAndUserCount> {
         return await this.prismaService.role.findUnique({
             where: { id },
-            include: { permissions: true, users: true },
+            select: {
+                id: true,
+                name: true,
+                permissions: true,
+                _count: true,
+            },
         });
     }
 
@@ -47,7 +65,10 @@ export class RolesService {
             .permissions();
     }
 
-    async updateRole(id: number, data: UpdateRoleDto): Promise<Role> {
+    async updateRole(
+        id: number,
+        data: UpdateRoleDto,
+    ): Promise<RoleWithPermissionsAndUserCount> {
         const role = await this.prismaService.role.update({
             where: { id },
             data: {
@@ -61,7 +82,12 @@ export class RolesService {
                     connect: data.permissions?.map((u) => ({ id: u })),
                 },
             },
-            include: { permissions: true, users: true },
+            select: {
+                id: true,
+                name: true,
+                permissions: true,
+                _count: true,
+            },
         });
         return role;
     }

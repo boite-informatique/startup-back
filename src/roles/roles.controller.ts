@@ -23,15 +23,15 @@ import { RequirePermissions } from 'src/permissions/decorators/required-permissi
 export class RolesController {
     constructor(private readonly rolesService: RolesService) {}
     @Post()
-    async createRole(@Body() createRoleDto: CreateRoleDto): Promise<Role> {
+    async createRole(@Body() createRoleDto: CreateRoleDto) {
         return await this.rolesService.createRole(createRoleDto);
     }
     @Get()
-    async findAllRoles(): Promise<Role[]> {
+    async findAllRoles() {
         return await this.rolesService.findAllRoles();
     }
     @Get(':id')
-    async findOneRole(@Param('id') id: string): Promise<Role> {
+    async findOneRole(@Param('id') id: string) {
         return await this.rolesService.findOneRole(+id);
     }
     @Get('/:id/users')
