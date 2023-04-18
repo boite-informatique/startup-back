@@ -17,20 +17,21 @@ export class RolesService {
                     connect: data.permissions.map((u) => ({ id: u })),
                 },
             },
+            include: { users: true, permissions: true },
         });
         return role;
     }
 
     async findAllRoles(): Promise<Role[]> {
         return await this.prismaService.role.findMany({
-            include: { permissions: true },
+            include: { permissions: true, users: true },
         });
     }
 
     async findOneRole(id: number): Promise<Role> {
         return await this.prismaService.role.findUnique({
             where: { id },
-            include: { permissions: true },
+            include: { permissions: true, users: true },
         });
     }
 
@@ -60,7 +61,7 @@ export class RolesService {
                     connect: data.permissions?.map((u) => ({ id: u })),
                 },
             },
-            include: { permissions: true },
+            include: { permissions: true, users: true },
         });
         return role;
     }
