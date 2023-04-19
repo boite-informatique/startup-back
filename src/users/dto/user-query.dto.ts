@@ -10,9 +10,6 @@ class UserQueryDtoDef {
     @IsIn(['Teacher', 'Student', 'Staff'])
     type?: UserType;
 
-    @IsIn(['Male', 'Female'])
-    sex?: 'Male' | 'Female';
-
     @IsInt()
     @Type(() => Number)
     skip: number = 0;
