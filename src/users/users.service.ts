@@ -22,9 +22,8 @@ export class UsersService {
                     mode: 'insensitive',
                 },
                 type: { equals: userQueryDto.type },
-                sex: { equals: userQueryDto.sex },
             },
-            include: { roles: true, student: true, teacher: true },
+            include: { roles: true, student: true, teacher: true, staff: true },
         });
         if (users.length === 0) {
             throw new UserNotFoundException();
@@ -36,7 +35,7 @@ export class UsersService {
     async findOne(id: number) {
         const user = await this.prismaServive.user.findUnique({
             where: { id },
-            include: { student: true, teacher: true, roles: true },
+            include: { student: true, teacher: true, roles: true, staff: true },
         });
         if (!user) {
             throw new UserNotFoundException();

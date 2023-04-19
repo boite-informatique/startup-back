@@ -9,79 +9,111 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
- 
 
-model Role{
-  id  Int @id @default(autoincrement())
-  name String @unique
-  users User[]
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  users       User[]
   permissions Permission[]
 }
 
 model Permission {
-  id Int @id @default(autoincrement())
-  name String @unique
+  id    Int    @id @default(autoincrement())
+  name  String @unique
   roles Role[]
-
 }
 
-model User{
-  id  Int @id @default(autoincrement()) 
-  email String @unique
-  password String
-  first_name String
-  last_name String
-  middle_name String
-  date_of_birth DateTime
-  location_of_birth String
-  sex Sexe
-  type  UserType
-  activated Boolean @default(true)
-  student Student?  
-  teacher Teacher?
-  roles Role[]  
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String
+  first_name    String
+  last_name     String
+  date_of_birth DateTime  @db.Date
+  type          UserType
+  activated     Boolean   @default(false)
+  phone         String
+  avatar        String?
+  student       Student?
+  teacher       Teacher?
+  staff         Staff?
+  roles         Role[]
+  projects      Project[]
 }
 
 enum UserType {
-    Student 
-    Teacher
-    Staff
+  student
+  teacher
+  staff
 }
 
-enum Sexe {
-  Male  
-  Female
+model Student {
+  id               Int    @id
+  user             User   @relation(fields: [id], references: [id])
+  registration_num String
+  establishement   String
+  filiere          String
+  specialty        String
 }
 
-model Student{
-  id Int @id @default(autoincrement()) @map("student_userId")
-  user_id Int @unique
-  user User @relation(fields: [user_id], references: [id])
-  domain String
-  establishement String 
-  faculty String?
-  departement String
-  filiere String
-  level Int 
-  section String
-  group Int  
-  
+model Teacher {
+  id                     Int                 @id
+  user                   User                @relation(fields: [id], references: [id])
+  registration_num       String
+  establishement         String
+  grade                  String
+  specialty              String
+  supervised_projects    Project[]           @relation(name: "supervision")
+  co_supervised_projects Project[]           @relation(name: "co_supervision")
+  proejct_validation      ProejctValidation[]
 }
 
-
-model Teacher{
-  id Int @id @default(autoincrement())
-  user_id Int @unique
-  user User @relation(fields: [user_id], references: [id])
-  domain String
-  academic_rank String
-  establishement String
- 
+model Staff {
+  id    Int    @id
+  user  User   @relation(fields: [id], references: [id])
+  grade String
 }
- 
-//enum TeacherLevel{
-//  AssociateProfessor
-//  AssistantProfessor
-//  Professor
-//}
 
+model Project {
+  id           Int         @id @default(autoincrement())
+  type         ProjectType
+  resume       String
+  brand_name   String
+  product_name String
+  created_at   DateTime    @default(now())
+
+  owner_id         Int
+  owner            User               @relation(fields: [owner_id], references: [id])
+  supervisor_id    Int
+  supervisor       Teacher            @relation(fields: [supervisor_id], references: [id], name: "supervision")
+  co_supervisor_id Int
+  co_supervisor    Teacher            @relation(fields: [co_supervisor_id], references: [id], name: "co_supervision")
+  validation       ProejctValidation?
+}
+
+enum ProjectType {
+  startup
+  patent
+}
+
+model ProejctValidation {
+  id      Int     @id
+  project Project @relation(fields: [id], references: [id])
+
+  decision     ProjectValidationDecision
+  reservation  ProjectValidationReservation
+  note         String
+  validator_id Int
+  validator    Teacher                      @relation(fields: [validator_id], references: [id])
+}
+
+enum ProjectValidationDecision {
+  favorable
+  unfavorable
+  accepted_with_reservation
+}
+
+enum ProjectValidationReservation {
+  major
+  minor
+}
