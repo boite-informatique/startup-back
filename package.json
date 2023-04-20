@@ -22,7 +22,9 @@
         "seed": "npx prisma migrate dev && ts-node prisma/seed.ts"
     },
     "dependencies": {
+        "@nestjs-modules/mailer": "^1.8.1",
         "@nestjs/common": "^9.0.0",
+        "@nestjs/config": "^2.3.1",
         "@nestjs/core": "^9.0.0",
         "@nestjs/jwt": "^10.0.3",
         "@nestjs/mapped-types": "*",
@@ -35,6 +37,7 @@
         "class-validator": "^0.14.0",
         "dotenv": "^16.0.3",
         "husky": "^8.0.3",
+        "nodemailer": "^6.9.1",
         "passport": "^0.6.0",
         "passport-jwt": "^4.0.1",
         "postgres": "^3.3.4",
