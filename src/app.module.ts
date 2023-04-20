@@ -22,8 +22,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
         }),
         MailerModule.forRootAsync({
             imports: [ConfigModule],
+            inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
-                transport: configService.get('email.transport'),
+                transport: configService.get('email'),
                 defaults: '"Innovium" <noreply@innovium.dz>',
                 preview: true,
             }),
