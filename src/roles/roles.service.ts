@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Role, User, Permission } from '@prisma/client';
+import { User, Permission } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { RoleWithPermissionsAndUserCount } from './dto/role-output.dto';
@@ -24,6 +24,7 @@ export class RolesService {
                 id: true,
                 name: true,
                 permissions: true,
+                users: true,
                 _count: true,
             },
         });
@@ -36,6 +37,7 @@ export class RolesService {
                 id: true,
                 name: true,
                 permissions: true,
+                users: true,
                 _count: true,
             },
         });
@@ -48,6 +50,7 @@ export class RolesService {
                 id: true,
                 name: true,
                 permissions: true,
+                users: true,
                 _count: true,
             },
         });
@@ -86,6 +89,7 @@ export class RolesService {
                 id: true,
                 name: true,
                 permissions: true,
+                users: true,
                 _count: true,
             },
         });
