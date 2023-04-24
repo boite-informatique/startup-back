@@ -8,6 +8,8 @@ import {
     Req,
     NotFoundException,
     ForbiddenException,
+    Post,
+    Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -17,6 +19,7 @@ import { PermissionsService } from 'src/permissions/permissions.service';
 import { UserOutput, UserOutputWithRelations } from './dto/user-output.dto';
 import { PermissionsOutput } from 'src/permissions/dto/permissions-output.dto';
 import { Role } from 'src/roles/dto/role-output.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -26,6 +29,10 @@ export class UsersController {
         private readonly permissionService: PermissionsService,
     ) {}
 
+    @Post()
+    async createUser(@Body() createUserDto: CreateUserDto) {
+        return await this.usersService.createUser(createUserDto);
+    }
     @Get()
     async findUsers(
         @Query() userQueryDto: UserQueryDto,
@@ -78,5 +85,10 @@ export class UsersController {
             throw new ForbiddenException();
         }
         return await this.usersService.update(+id, updateUserDto);
+    }
+
+    @Delete(':id')
+    async deleteUser(@Param('id') id: string) {
+        return await this.usersService.deleteUser(+id);
     }
 }
