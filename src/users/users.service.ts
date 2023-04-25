@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '@prisma/client';
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { HashingService } from 'src/iam/hashing/hashing.service';
-import { threadId } from 'worker_threads';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -14,78 +16,42 @@ export class UsersService {
         private readonly prismaServive: PrismaService,
         private readonly hashingService: HashingService,
     ) {}
+
     async createUser(createUserDto: CreateUserDto) {
-        const {
-            email,
-            password,
-            first_name,
-            last_name,
-            date_of_birth,
-            type,
-            info,
-            phone,
-        } = createUserDto;
-
-        try {
-            let user: User;
-            switch (type) {
-                case 'student': {
-                    user = await this.prismaServive.user.create({
-                        data: {
-                            email,
-                            password: password
-                                ? await this.hashingService.generate(password)
-                                : undefined,
-                            first_name,
-                            last_name,
-                            date_of_birth,
-                            type,
-                            phone,
-                            student: { create: info },
-                        },
-                    });
-                    break;
-                }
-                case 'teacher': {
-                    user = await this.prismaServive.user.create({
-                        data: {
-                            email,
-                            password: password
-                                ? await this.hashingService.generate(password)
-                                : undefined,
-                            first_name,
-                            last_name,
-                            date_of_birth,
-                            type,
-                            phone,
-                            teacher: { create: info },
-                        },
-                    });
-                    break;
-                }
-                case 'staff': {
-                    user = await this.prismaServive.user.create({
-                        data: {
-                            email,
-                            password: password
-                                ? await this.hashingService.generate(password)
-                                : undefined,
-                            first_name,
-                            last_name,
-                            date_of_birth,
-                            type,
-                            phone,
-                            staff: { create: info },
-                        },
-                    });
-                    break;
-                }
-            }
-
-            return user;
-        } catch (e) {
-            throw new NotFoundException();
+        const checkUser = await this.prismaServive.user.findUnique({
+            where: { email: createUserDto.email },
+        });
+        if (checkUser) {
+            throw new ConflictException('Email already exists');
         }
+
+        let user = await this.prismaServive.user.create({
+            data: {
+                email: createUserDto.email,
+                password: await this.hashingService.generate(
+                    createUserDto.password,
+                ),
+                first_name: createUserDto.first_name,
+                last_name: createUserDto.last_name,
+                date_of_birth: new Date(createUserDto.date_of_birth),
+                type: createUserDto.type,
+                phone: createUserDto.phone,
+                student:
+                    createUserDto.type == 'student'
+                        ? { create: createUserDto.info }
+                        : undefined,
+                teacher:
+                    createUserDto.type == 'teacher'
+                        ? { create: createUserDto.info }
+                        : undefined,
+                staff:
+                    createUserDto.type == 'staff'
+                        ? { create: createUserDto.info }
+                        : undefined,
+            },
+        });
+
+        return user;
     }
     async findUsers(userQueryDto: UserQueryDto) {
         const users = await this.prismaServive.user.findMany({

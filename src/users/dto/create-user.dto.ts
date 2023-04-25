@@ -24,7 +24,6 @@ export class CreateUserDto {
     date_of_birth: Date;
     @IsString()
     type: UserType;
-
     activated?: boolean;
     @IsString()
     phone: string;
