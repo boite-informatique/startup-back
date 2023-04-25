@@ -101,7 +101,7 @@ model ProejctValidation {
   project Project @relation(fields: [id], references: [id])
 
   decision     ProjectValidationDecision
-  reservation  ProjectValidationReservation
+  reservation  ProjectValidationReservation?
   note         String
   validator_id Int
   validator    Teacher                      @relation(fields: [validator_id], references: [id])

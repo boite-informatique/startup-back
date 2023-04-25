@@ -25,7 +25,7 @@ export class UsersService {
             throw new ConflictException('Email already exists');
         }
 
-        let user = await this.prismaServive.user.create({
+        const user = await this.prismaServive.user.create({
             data: {
                 email: createUserDto.email,
                 password: await this.hashingService.generate(
