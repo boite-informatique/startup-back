@@ -1,22 +1,40 @@
 import {
     IsBoolean,
+    IsDate,
     IsEmail,
-    IsInt,
+    IsEnum,
+    IsObject,
+    IsOptional,
     IsString,
     MinLength,
 } from 'class-validator';
+import { UserType } from '@prisma/client';
 
 export class CreateUserDto {
     @IsEmail()
     email: string;
-
     @IsString()
     @MinLength(6)
     password: string;
+    @IsString()
+    first_name: string;
+    @IsString()
+    last_name: string;
+    @IsString()
+    date_of_birth: Date;
+    @IsString()
+    type: UserType;
 
-    @IsInt({ each: true })
+    activated?: boolean;
+    @IsString()
+    phone: string;
+    @IsString()
+    @IsOptional()
+    avatar?: string;
+    @IsOptional()
     roles: any[];
-
-    @IsBoolean()
-    activated: boolean;
+    @IsOptional()
+    info: any;
+    @IsOptional()
+    projects: any[];
 }
