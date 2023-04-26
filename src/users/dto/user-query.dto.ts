@@ -1,5 +1,5 @@
 import { Max, IsIn, IsInt, Min, IsString } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { UserType } from '@prisma/client';
 import { PartialType } from '@nestjs/swagger';
 
@@ -8,6 +8,7 @@ class UserQueryDtoDef {
     first_name: string;
 
     @IsIn(['teacher', 'student', 'staff'])
+    @Transform(({ value }) => value.toLowerCase())
     type?: UserType;
 
     @IsInt()
