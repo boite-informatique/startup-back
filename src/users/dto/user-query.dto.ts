@@ -7,7 +7,7 @@ class UserQueryDtoDef {
     @IsString()
     first_name: string;
 
-    @IsIn(['Teacher', 'Student', 'Staff'])
+    @IsIn(['teacher', 'student', 'staff'])
     type?: UserType;
 
     @IsInt()
