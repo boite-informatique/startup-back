@@ -1,4 +1,7 @@
 import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
     CACHE_MANAGER,
     ForbiddenException,
     Inject,
@@ -8,6 +11,7 @@ import {
 import { Cache } from 'cache-manager';
 import { HashingService } from 'src/iam/hashing/hashing.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { UserNotFoundException } from './exceptions/userNotFound.exception';
@@ -25,6 +29,42 @@ export class UsersService {
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ) {}
 
+    async createUser(createUserDto: CreateUserDto) {
+        const checkUser = await this.prismaServive.user.findUnique({
+            where: { email: createUserDto.email },
+        });
+        if (checkUser) {
+            throw new ConflictException('Email already exists');
+        }
+
+        const user = await this.prismaServive.user.create({
+            data: {
+                email: createUserDto.email,
+                password: await this.hashingService.generate(
+                    createUserDto.password,
+                ),
+                first_name: createUserDto.first_name,
+                last_name: createUserDto.last_name,
+                date_of_birth: new Date(createUserDto.date_of_birth),
+                type: createUserDto.type,
+                phone: createUserDto.phone,
+                student:
+                    createUserDto.type == 'student'
+                        ? { create: createUserDto.info }
+                        : undefined,
+                teacher:
+                    createUserDto.type == 'teacher'
+                        ? { create: createUserDto.info }
+                        : undefined,
+                staff:
+                    createUserDto.type == 'staff'
+                        ? { create: createUserDto.info }
+                        : undefined,
+            },
+        });
+
+        return user;
+    }
     async findUsers(userQueryDto: UserQueryDto) {
         const users = await this.prismaServive.user.findMany({
             take: userQueryDto.take,
@@ -92,6 +132,13 @@ export class UsersService {
         return userRoles;
     }
 
+
+    async deleteUser(userId: number) {
+        try {
+            return await this.prismaServive.user.delete({
+                where: { id: userId },
+            });
+
     async forgotPassword(email: string) {
         const user = await this.prismaServive.user.findUnique({
             where: { email },
@@ -122,10 +169,12 @@ export class UsersService {
                 });
             }
             return { message: 'Password Updated' };
+
         } catch (e) {
             throw new NotFoundException();
         }
     }
+
     async generateResetToken(email: string): Promise<string> {
         const token = Math.random().toString(36).slice(-8);
         // Save token in cache with 15 minutes ttl
@@ -140,7 +189,6 @@ export class UsersService {
         return token;
     }
 
-    //////////////////
     async sendResetMail(email: string, Token: string) {
         const mailOptions = {
             from: 'cade47@ethereal.email',

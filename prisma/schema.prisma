@@ -38,7 +38,8 @@ model User {
   teacher       Teacher?
   staff         Staff?
   roles         Role[]
-  projects      Project[]
+  owned_projects      Project[] @relation("ownership")
+  member_in_projects Project[] @relation("membership")
 }
 
 enum UserType {
@@ -83,12 +84,13 @@ model Project {
   created_at   DateTime    @default(now())
 
   owner_id         Int
-  owner            User               @relation(fields: [owner_id], references: [id])
+  owner            User               @relation(fields: [owner_id], references: [id], name: "ownership")
   supervisor_id    Int
   supervisor       Teacher            @relation(fields: [supervisor_id], references: [id], name: "supervision")
   co_supervisor_id Int
   co_supervisor    Teacher            @relation(fields: [co_supervisor_id], references: [id], name: "co_supervision")
   validation       ProejctValidation?
+  members User[] @relation(name: "membership")
 }
 
 enum ProjectType {
@@ -101,7 +103,7 @@ model ProejctValidation {
   project Project @relation(fields: [id], references: [id])
 
   decision     ProjectValidationDecision
-  reservation  ProjectValidationReservation
+  reservation  ProjectValidationReservation?
   note         String
   validator_id Int
   validator    Teacher                      @relation(fields: [validator_id], references: [id])
