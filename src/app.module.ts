@@ -8,6 +8,8 @@ import { JwtAuthGuard } from './iam/authentication/guards/jwt-auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import emailConfig from './config/email.config';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { FileUploadModule } from './file-upload/file-upload.module';
+import { ProjectModule } from './project/project.module';
 
 @Module({
     imports: [
@@ -29,6 +31,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
                 preview: true,
             }),
         }),
+        FileUploadModule,
+        ProjectModule,
     ],
     providers: [
         {
