@@ -11,8 +11,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { UserNotFoundException } from './exceptions/userNotFound.exception';
-import * as nodemailer from 'nodemailer';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ResetDto } from './dto/password-reset.dto';
+
+const FORGOT_PASSWORD_CACHE_KEY = 'forgetPassword:';
 
 @Injectable()
 export class UsersService {
@@ -105,16 +107,18 @@ export class UsersService {
         return { message: 'Reset email sent successfully' };
     }
 
-    async resetPassword(email: string, token: string, newPassword: string) {
-        const cachedToken = await this.cacheManager.get(email);
+    async resetPassword(resetDto: ResetDto) {
+        const cachedToken = await this.cacheManager.get(
+            FORGOT_PASSWORD_CACHE_KEY + resetDto.email,
+        );
         if (!cachedToken) {
             throw new ForbiddenException('token expired');
         }
         try {
-            if (cachedToken == token) {
+            if (cachedToken == resetDto.token) {
                 await this.prismaServive.user.update({
-                    where: { email },
-                    data: { password: newPassword },
+                    where: { email: resetDto.email },
+                    data: { password: resetDto.password },
                 });
             }
             return { message: 'Password Updated' };
@@ -124,10 +128,14 @@ export class UsersService {
     }
     async generateResetToken(email: string): Promise<string> {
         const token = Math.random().toString(36).slice(-8);
-
         // Save token in cache with 15 minutes ttl
+
         const ttl = 15 * 60 * 1000;
-        await this.cacheManager.set(email, token, ttl);
+        await this.cacheManager.set(
+            FORGOT_PASSWORD_CACHE_KEY + email,
+            token,
+            ttl,
+        );
 
         return token;
     }

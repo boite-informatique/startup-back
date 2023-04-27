@@ -18,6 +18,7 @@ import { PermissionsService } from 'src/permissions/permissions.service';
 import { UserOutput, UserOutputWithRelations } from './dto/user-output.dto';
 import { PermissionsOutput } from 'src/permissions/dto/permissions-output.dto';
 import { Role } from 'src/roles/dto/role-output.dto';
+import { EmailDto, ResetDto } from './dto/password-reset.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -81,8 +82,12 @@ export class UsersController {
         return await this.usersService.update(+id, updateUserDto);
     }
 
-    @Post('/reset-password')
-    async resetPassword(@Body() body: { email: string }) {
-        return await this.usersService.resetPassword(body.email);
+    @Post('/forget-password')
+    async forgotPassword(@Body() emailDto: EmailDto) {
+        return await this.usersService.forgotPassword(emailDto.email);
+    }
+    @Patch('/reset-password')
+    async updatePassword(@Body() resetDto: ResetDto) {
+        return await this.usersService.resetPassword(resetDto);
     }
 }
