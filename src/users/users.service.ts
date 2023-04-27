@@ -1,7 +1,5 @@
 import {
     ConflictException,
-    Injectable,
-    NotFoundException,
     CACHE_MANAGER,
     ForbiddenException,
     Inject,
@@ -132,12 +130,15 @@ export class UsersService {
         return userRoles;
     }
 
-
     async deleteUser(userId: number) {
         try {
             return await this.prismaServive.user.delete({
                 where: { id: userId },
             });
+        } catch (e) {
+            throw new NotFoundException();
+        }
+    }
 
     async forgotPassword(email: string) {
         const user = await this.prismaServive.user.findUnique({
@@ -169,7 +170,6 @@ export class UsersService {
                 });
             }
             return { message: 'Password Updated' };
-
         } catch (e) {
             throw new NotFoundException();
         }

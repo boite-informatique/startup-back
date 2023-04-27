@@ -17,7 +17,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         RolesModule,
         IamModule,
         PrismaModule,
-        CacheModule.register(),
+        CacheModule.register({ isGlobal: true }),
         ConfigModule.forRoot({
             isGlobal: true,
             load: [emailConfig],

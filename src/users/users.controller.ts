@@ -2,7 +2,6 @@ import {
     Controller,
     Get,
     Body,
-    Post,
     Patch,
     Param,
     Query,
@@ -92,6 +91,7 @@ export class UsersController {
     @Delete(':id')
     async deleteUser(@Param('id') id: string) {
         return await this.usersService.deleteUser(+id);
+    }
     @Post('/forget-password')
     async forgotPassword(@Body() emailDto: EmailDto) {
         return await this.usersService.forgotPassword(emailDto.email);
