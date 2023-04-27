@@ -1,15 +1,26 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    CACHE_MANAGER,
+    ForbiddenException,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { HashingService } from 'src/iam/hashing/hashing.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { UserNotFoundException } from './exceptions/userNotFound.exception';
+import * as nodemailer from 'nodemailer';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class UsersService {
     constructor(
         private readonly prismaServive: PrismaService,
         private readonly hashingService: HashingService,
+        private readonly emailService: MailerService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ) {}
 
     async findUsers(userQueryDto: UserQueryDto) {
@@ -77,5 +88,59 @@ export class UsersService {
         }
 
         return userRoles;
+    }
+
+    async forgotPassword(email: string) {
+        const user = await this.prismaServive.user.findUnique({
+            where: { email },
+        });
+        if (!user) {
+            // User not found
+            return { message: 'User dont exist' };
+        }
+        // Generate a password reset token
+        const resetToken = await this.generateResetToken(email);
+        //send mail
+        this.sendResetMail(user.email, resetToken);
+        return { message: 'Reset email sent successfully' };
+    }
+
+    async resetPassword(email: string, token: string, newPassword: string) {
+        const cachedToken = await this.cacheManager.get(email);
+        if (!cachedToken) {
+            throw new ForbiddenException('token expired');
+        }
+        try {
+            if (cachedToken == token) {
+                await this.prismaServive.user.update({
+                    where: { email },
+                    data: { password: newPassword },
+                });
+            }
+            return { message: 'Password Updated' };
+        } catch (e) {
+            throw new NotFoundException();
+        }
+    }
+    async generateResetToken(email: string): Promise<string> {
+        const token = Math.random().toString(36).slice(-8);
+
+        // Save token in cache with 15 minutes ttl
+        const ttl = 15 * 60 * 1000;
+        await this.cacheManager.set(email, token, ttl);
+
+        return token;
+    }
+
+    //////////////////
+    async sendResetMail(email: string, Token: string) {
+        const mailOptions = {
+            from: 'cade47@ethereal.email',
+            to: email,
+            subject: 'Password reset',
+            text: `Use this Link to reset your password: https://example/${Token}`,
+        };
+
+        return await this.emailService.sendMail(mailOptions);
     }
 }

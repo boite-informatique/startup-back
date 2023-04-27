@@ -2,6 +2,7 @@ import {
     Controller,
     Get,
     Body,
+    Post,
     Patch,
     Param,
     Query,
@@ -78,5 +79,10 @@ export class UsersController {
             throw new ForbiddenException();
         }
         return await this.usersService.update(+id, updateUserDto);
+    }
+
+    @Post('/reset-password')
+    async resetPassword(@Body() body: { email: string }) {
+        return await this.usersService.resetPassword(body.email);
     }
 }
