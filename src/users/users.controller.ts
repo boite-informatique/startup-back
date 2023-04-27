@@ -2,6 +2,7 @@ import {
     Controller,
     Get,
     Body,
+    Post,
     Patch,
     Param,
     Query,
@@ -20,6 +21,7 @@ import { UserOutput, UserOutputWithRelations } from './dto/user-output.dto';
 import { PermissionsOutput } from 'src/permissions/dto/permissions-output.dto';
 import { Role } from 'src/roles/dto/role-output.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { EmailDto, ResetDto } from './dto/password-reset.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -90,5 +92,12 @@ export class UsersController {
     @Delete(':id')
     async deleteUser(@Param('id') id: string) {
         return await this.usersService.deleteUser(+id);
+    @Post('/forget-password')
+    async forgotPassword(@Body() emailDto: EmailDto) {
+        return await this.usersService.forgotPassword(emailDto.email);
+    }
+    @Patch('/reset-password')
+    async updatePassword(@Body() resetDto: ResetDto) {
+        return await this.usersService.resetPassword(resetDto);
     }
 }

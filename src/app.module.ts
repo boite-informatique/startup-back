@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { JwtAuthGuard } from './iam/authentication/guards/jwt-auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import emailConfig from './config/email.config';
+import { CacheModule } from '@nestjs/cache-manager';
 import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
@@ -16,6 +17,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         RolesModule,
         IamModule,
         PrismaModule,
+        CacheModule.register(),
         ConfigModule.forRoot({
             isGlobal: true,
             load: [emailConfig],
