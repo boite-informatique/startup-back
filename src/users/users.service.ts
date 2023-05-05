@@ -15,8 +15,10 @@ import { UserQueryDto } from './dto/user-query.dto';
 import { UserNotFoundException } from './exceptions/userNotFound.exception';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ResetDto } from './dto/password-reset.dto';
+import { ActivateDto } from './dto/activate-account.dto';
 
 const FORGOT_PASSWORD_CACHE_KEY = 'forgetPassword:';
+const ACTIVATE_CACHE_KEY = 'activate:';
 
 @Injectable()
 export class UsersService {
@@ -198,5 +200,54 @@ export class UsersService {
         };
 
         return await this.emailService.sendMail(mailOptions);
+    }
+    async generateActivateToken(email: string): Promise<string> {
+        const token = Math.random().toString(36).slice(-8);
+        // Save token in cache with 15 minutes ttl
+
+        const ttl = 15 * 60 * 1000;
+        await this.cacheManager.set(ACTIVATE_CACHE_KEY + email, token, ttl);
+
+        return token;
+    }
+
+    async sendActivatedMail(email: string, Token: string) {
+        const mailOptions = {
+            from: 'cade47@ethereal.email',
+            to: email,
+            subject: 'Password reset',
+            text: `Use this Link to activate ur account: https://example/${Token}`,
+        };
+        return await this.emailService.sendMail(mailOptions);
+    }
+    async activateReq(email: string) {
+        const user = await this.prismaServive.user.findUnique({
+            where: { email },
+        });
+        if (!user) {
+            throw new NotFoundException();
+        }
+        const token = await this.generateActivateToken(email);
+        this.sendActivatedMail(email, token);
+        return { message: 'Activate email sent successfully' };
+    }
+    async activateAcc(activateDto: ActivateDto) {
+        const cachedToken = await this.cacheManager.get(
+            FORGOT_PASSWORD_CACHE_KEY + activateDto.email,
+        );
+        if (!cachedToken) {
+            throw new ForbiddenException('token expired');
+        }
+        try {
+            if (cachedToken == activateDto.token) {
+                await this.prismaServive.user.update({
+                    where: { email: activateDto.email },
+                    data: { activated: true },
+                });
+            }
+            return { message: 'Account activated' };
+        } catch (e) {
+            throw new NotFoundException();
+        }
     }
 }

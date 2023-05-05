@@ -21,6 +21,7 @@ import { PermissionsOutput } from 'src/permissions/dto/permissions-output.dto';
 import { Role } from 'src/roles/dto/role-output.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { EmailDto, ResetDto } from './dto/password-reset.dto';
+import { ActivateDto } from './dto/activate-account.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -99,5 +100,13 @@ export class UsersController {
     @Patch('/reset-password')
     async updatePassword(@Body() resetDto: ResetDto) {
         return await this.usersService.resetPassword(resetDto);
+    }
+    @Post('/request-activation')
+    async activateReq(@Body() emailDto: EmailDto) {
+        return await this.usersService.activateReq(emailDto.email);
+    }
+    @Patch('/activate-account')
+    async activateAcc(@Body() activateDto: ActivateDto) {
+        return await this.usersService.activateAcc(activateDto);
     }
 }
