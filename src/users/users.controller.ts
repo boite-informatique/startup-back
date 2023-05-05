@@ -22,6 +22,7 @@ import { Role } from 'src/roles/dto/role-output.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { EmailDto, ResetDto } from './dto/password-reset.dto';
 import { ActivateDto } from './dto/activate-account.dto';
+import { Public } from 'src/iam/authentication/decorators/public.decorator';
 
 @ApiTags('users')
 @Controller('users')
@@ -31,6 +32,7 @@ export class UsersController {
         private readonly permissionService: PermissionsService,
     ) {}
 
+    @Public()
     @Post()
     async createUser(@Body() createUserDto: CreateUserDto) {
         return await this.usersService.createUser(createUserDto);
@@ -70,6 +72,30 @@ export class UsersController {
         return await this.usersService.findUserRoles(+id);
     }
 
+    @Public()
+    @Post('/forget-password')
+    async forgotPassword(@Body() emailDto: EmailDto) {
+        return await this.usersService.forgotPassword(emailDto.email);
+    }
+
+    @Public()
+    @Patch('/reset-password')
+    async updatePassword(@Body() resetDto: ResetDto) {
+        return await this.usersService.resetPassword(resetDto);
+    }
+
+    @Public()
+    @Post('/request-activation')
+    async activateReq(@Body() emailDto: EmailDto) {
+        return await this.usersService.activateReq(emailDto.email);
+    }
+
+    @Public()
+    @Patch('/activate-account')
+    async activateAcc(@Body() activateDto: ActivateDto) {
+        return await this.usersService.activateAcc(activateDto);
+    }
+
     @Patch(':id')
     async update(
         @Param('id') id: string,
@@ -92,21 +118,5 @@ export class UsersController {
     @Delete(':id')
     async deleteUser(@Param('id') id: string) {
         return await this.usersService.deleteUser(+id);
-    }
-    @Post('/forget-password')
-    async forgotPassword(@Body() emailDto: EmailDto) {
-        return await this.usersService.forgotPassword(emailDto.email);
-    }
-    @Patch('/reset-password')
-    async updatePassword(@Body() resetDto: ResetDto) {
-        return await this.usersService.resetPassword(resetDto);
-    }
-    @Post('/request-activation')
-    async activateReq(@Body() emailDto: EmailDto) {
-        return await this.usersService.activateReq(emailDto.email);
-    }
-    @Patch('/activate-account')
-    async activateAcc(@Body() activateDto: ActivateDto) {
-        return await this.usersService.activateAcc(activateDto);
     }
 }

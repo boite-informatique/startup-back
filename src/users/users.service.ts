@@ -196,7 +196,7 @@ export class UsersService {
             from: 'cade47@ethereal.email',
             to: email,
             subject: 'Password reset',
-            text: `Use this Link to reset your password: https://example/${Token}`,
+            text: `Use this Link to reset your password: http://localhost:5173/change_password/${Token}?email=${email}`,
         };
 
         return await this.emailService.sendMail(mailOptions);
@@ -213,10 +213,10 @@ export class UsersService {
 
     async sendActivatedMail(email: string, Token: string) {
         const mailOptions = {
-            from: 'cade47@ethereal.email',
+            from: 'Innovium <no-reply@innovium.dz>',
             to: email,
             subject: 'Password reset',
-            text: `Use this Link to activate ur account: https://example/${Token}`,
+            text: `Use this Link to activate ur account: http://localhost:5173/activate_account/${Token}?email=${email}`,
         };
         return await this.emailService.sendMail(mailOptions);
     }
