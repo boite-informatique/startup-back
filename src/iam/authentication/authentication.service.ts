@@ -36,7 +36,10 @@ export class AuthenticationService {
             throw new ForbiddenException('Account is deactivated');
         }
 
-        const token = await this.jwtService.signAsync({ sub: user.id });
+        const token = await this.jwtService.signAsync({
+            sub: user.id,
+            type: user.type,
+        });
 
         return { token };
     }
