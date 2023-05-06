@@ -24,7 +24,6 @@ export class UserOutputWithRelations extends UserOutput {
 class Teacher {
     id: number;
     registration_num: string;
-    establishement: string;
     grade: string;
     specialty: string;
 }
@@ -32,7 +31,6 @@ class Teacher {
 class Student {
     id: number;
     registration_num: string;
-    establishement: string;
     filiere: string;
     specialty: string;
 }

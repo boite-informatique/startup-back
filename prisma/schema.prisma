@@ -93,7 +93,7 @@ model Project {
   resume       String
   brand_name   String
   product_name String
-  logo         String
+  logo         String?
   created_at   DateTime    @default(now())
 
   owner_id        Int

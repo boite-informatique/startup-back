@@ -47,7 +47,7 @@ export class UsersController {
     @Get('permissions')
     async findCurrentUserPermissions(@Req() req): Promise<PermissionsOutput[]> {
         const permissions = await this.permissionService.findUserPermissions(
-            +req.user.userId,
+            +req.user.sub,
         );
 
         if (permissions.length === 0) {
@@ -59,7 +59,7 @@ export class UsersController {
 
     @Get('me')
     async getCurrentUser(@Req() req): Promise<UserOutputWithRelations> {
-        return await this.usersService.findOne(+req.user.userId);
+        return await this.usersService.findOne(+req.user.sub);
     }
 
     @Get(':id')
@@ -102,7 +102,7 @@ export class UsersController {
         @Body() updateUserDto: UpdateUserDto,
         @Req() req,
     ): Promise<UserOutput> {
-        const userId: number = +req.user.userId;
+        const userId: number = +req.user.sub;
         if (
             +id !== userId &&
             !(await this.permissionService.checkUserPermission(
