@@ -20,6 +20,7 @@ export class ProjectCreationService {
         const alreadyRegisteredMembers = await this.getNewProjectMembers(
             body.members,
         );
+        alreadyRegisteredMembers.push(user.email);
         const alreadyRegisteredSupervisors =
             await this.getNewProjectSupervisors(body.supervisors);
 
