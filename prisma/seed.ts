@@ -1,3 +1,39 @@
+import { Prisma, PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+async function main() {
+    await prisma.settings.upsert({
+        where: { tag: 'PROJECT_PERIODS' },
+
+        update: {},
+
+        create: {
+            tag: 'PROJECT_PERIODS',
+            value: {
+                submission: '2023-05-07',
+                validation: '2023-05-14',
+                appeal: '2023-05-21',
+                appealValidation: '2023-05-28',
+                end: '2023-05-31',
+            },
+        },
+    });
+}
+
+main()
+    .then(async () => {
+        await prisma.$disconnect();
+    })
+
+    .catch(async (e) => {
+        console.error(e);
+
+        await prisma.$disconnect();
+
+        process.exit(1);
+    });
+
 // import { PrismaClient } from '@prisma/client';
 // import { faker } from '@faker-js/faker';
 
