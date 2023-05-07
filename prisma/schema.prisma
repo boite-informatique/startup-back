@@ -115,7 +115,7 @@ model ProjectHistory {
   id Int @id @default(autoincrement())
 
   project_id Int
-  project    Project @relation(fields: [project_id], references: [id])
+  project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
   user_id    Int
   user       User    @relation(fields: [user_id], references: [id])
 
@@ -128,7 +128,7 @@ model ProjectHistory {
 model ProjectValidation {
   id         Int     @id @default(autoincrement())
   project_id Int
-  project    Project @relation(fields: [project_id], references: [id])
+  project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
 
   decision    ProjectValidationDecision
   reservation ProjectValidationReservation?
@@ -142,7 +142,7 @@ model ProjectValidation {
 model ProjectInvitees {
   id         Int     @id @default(autoincrement())
   project_id Int
-  project    Project @relation(fields: [project_id], references: [id])
+  project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
 
   type  ProjectInvitationType
   email String                @unique
@@ -152,7 +152,7 @@ model ProjectInvitees {
 model ProjectTask {
   id         Int     @id @default(autoincrement())
   project_id Int
-  project    Project @relation(fields: [project_id], references: [id])
+  project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
 
   user_id Int
   user    User @relation(fields: [user_id], references: [id])

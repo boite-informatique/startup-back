@@ -6,14 +6,22 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
+import { projectInviteInput } from './types/sendProjectInvite.type';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class ProjectCreationService {
-    constructor(private readonly prismaService: PrismaService) {}
+    constructor(
+        private readonly prismaService: PrismaService,
+        private readonly mailService: MailerService,
+    ) {}
 
     async createProject(user: any, body: CreateProjectDto) {
-        const newMembers = this.getNewProjectMembers(body.members);
-        const newSupervisors = this.getNewProjectSupervisors(body.supervisors);
+        const alreadyRegisteredMembers = await this.getNewProjectMembers(
+            body.members,
+        );
+        const alreadyRegisteredSupervisors =
+            await this.getNewProjectSupervisors(body.supervisors);
 
         if (user.type == 'student') {
             if (body.members.length > 5)
@@ -34,13 +42,57 @@ export class ProjectCreationService {
             throw new ForbiddenException('You cannot create projects');
         }
 
-        const [project] = await this.prismaService.$transaction([
-            this.createProjectQuery(user.sub, {
-                members: newMembers,
-                supervisors: newSupervisors,
-                ...body,
-            }),
-        ]);
+        const project = await this.createProjectQuery(user.sub, {
+            ...body,
+            members: alreadyRegisteredMembers,
+            supervisors: alreadyRegisteredSupervisors,
+        });
+
+        for (const member of body.members) {
+            if (!alreadyRegisteredMembers.includes(member)) {
+                await this.sendProjectInvite({
+                    email: member,
+                    projectId: project.id,
+                    type: 'member',
+                });
+            }
+        }
+
+        for (const supervisor of body.supervisors) {
+            if (!alreadyRegisteredSupervisors.includes(supervisor)) {
+                await this.sendProjectInvite({
+                    email: supervisor,
+                    projectId: project.id,
+                    type: 'supervisor',
+                });
+            }
+        }
+
+        return project;
+    }
+
+    createProjectQuery(ownerId: number, body: CreateProjectDto) {
+        return this.prismaService.project.create({
+            data: {
+                brand_name: body.brand_name,
+                product_name: body.product_name,
+                resume: body.resume,
+                logo: body?.logo,
+                type: body.type,
+                owner: { connect: { id: ownerId } },
+                members: {
+                    connect:
+                        body.members.length > 0
+                            ? body.members.map((email) => ({ email }))
+                            : undefined,
+                },
+                supervisors: {
+                    connect:
+                        body.supervisors.length > 0 &&
+                        body.supervisors.map((email) => ({ email })),
+                },
+            },
+        });
     }
 
     async getNewProjectSupervisors(supervisorEmails: string[]) {
@@ -61,7 +113,7 @@ export class ProjectCreationService {
 
         if (nonTeachersupervisors.length > 0)
             throw new ConflictException({ nonTeachersupervisors });
-        return supervisors;
+        return supervisors.map((val) => val.email);
     }
 
     async getNewProjectMembers(memberEmails: string[]) {
@@ -74,7 +126,6 @@ export class ProjectCreationService {
                 member_in_projects: true,
             },
         });
-
         const conflictedMembers: string[] = []; // members that are already in a project
         const nonStudentMembers: string[] = [];
         for (const member of members) {
@@ -88,25 +139,23 @@ export class ProjectCreationService {
                 conflictedMembers,
                 nonStudentMembers,
             });
-        return members;
+        return members.map((val) => val.email);
     }
 
-    createProjectQuery(ownerId: number, body: CreateProjectDto) {
-        return this.prismaService.project.create({
+    async sendProjectInvite({ email, projectId, type }: projectInviteInput) {
+        const invite = await this.prismaService.projectInvitees.create({
             data: {
-                brand_name: body.brand_name,
-                product_name: body.product_name,
-                resume: body.resume,
-                logo: body?.logo,
-                type: body.type,
-                owner: { connect: { id: ownerId } },
-                members: { connect: body.members.map((email) => ({ email })) },
-                supervisors: {
-                    connect: body.supervisors.map((email) => ({ email })),
-                },
+                email,
+                type,
+                token: Math.random().toString(36).slice(-8),
+                project: { connect: { id: projectId } },
             },
         });
-    }
 
-    saveMemberInvitesQuery(emails: string[]) {}
+        await this.mailService.sendMail({
+            to: invite.email,
+            subject: 'You have been invited to a project',
+            text: `You are invited to join a project as a ${invite.type}, visit this link to register an account http://localhost:5173/register?email=${invite.email}&projectId=${invite.project_id}&type=${invite.type}&token=${invite.token}`,
+        });
+    }
 }

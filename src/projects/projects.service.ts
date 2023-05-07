@@ -7,10 +7,14 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
+import { ProjectCreationService } from './project-creation.service';
 
 @Injectable()
 export class ProjectsService {
-    constructor(private readonly prismaService: PrismaService) {}
+    constructor(
+        private readonly prismaService: PrismaService,
+        private readonly projectCreationService: ProjectCreationService,
+    ) {}
 
     async getProjects(user: any) {
         let projects = [];
@@ -36,41 +40,6 @@ export class ProjectsService {
     }
 
     async createProject(user: any, body: CreateProjectDto) {
-        if (user.type == 'student') {
-            body.members.push(user.email);
-            if (body.members.length > 6)
-                throw new BadRequestException(
-                    'Project members cannot be more than 6',
-                );
-            if (
-                (await this.prismaService.project.count({
-                    where: { members: { some: { id: user.sub } } },
-                })) > 0
-            )
-                throw new ConflictException(
-                    'Students cannot have more than one project',
-                );
-        }
-
-        if (user.type == 'staff') {
-            throw new ForbiddenException('You cannot create projects');
-        }
-
-        console.log(body);
-
-        return await this.prismaService.project.create({
-            data: {
-                brand_name: body.brand_name,
-                product_name: body.product_name,
-                resume: body.resume,
-                logo: body?.logo,
-                type: body.type,
-                owner: { connect: { id: user.sub } },
-                members: { connect: body.members.map((email) => ({ email })) },
-                supervisors: {
-                    connect: body.supervisors.map((email) => ({ email })),
-                },
-            },
-        });
+        return await this.projectCreationService.createProject(user, body);
     }
 }
