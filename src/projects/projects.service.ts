@@ -9,6 +9,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectCreationService } from './project-creation.service';
 import { ValidationDto } from './dto/project-validation.dto';
+import { UpdateProjectPeriodsDto } from './dto/update-project-periods.dto';
+import { Prisma } from '@prisma/client';
+import { JSONValue } from 'postgres';
+import { UpdateProjectDto } from './dto/update-project.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -101,5 +105,25 @@ export class ProjectsService {
         } catch (error) {
             throw new NotFoundException('Project not found');
         }
+    }
+
+    async updateProject(
+        userId: number,
+        body: UpdateProjectDto,
+        projectId: number,
+    ) {
+        try {
+            return await this.prismaService.project.updateMany({
+                where: { id: projectId, owner_id: userId },
+                data: body,
+            });
+        } catch (error) {}
+    }
+
+    async updateProjectPeriods(body: UpdateProjectPeriodsDto) {
+        this.prismaService.settings.update({
+            data: { value: body as unknown as Prisma.JsonValue },
+            where: { tag: 'PROJECT_PERIODS' },
+        });
     }
 }

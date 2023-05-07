@@ -165,10 +165,10 @@ model ProjectTask {
 }
 
 model Settings {
-  id Int @id
+  id Int @id @default(autoincrement())
 
-  field String @unique
-  value String
+  tag String @unique
+  value Json
 }
 
 enum ProjectInvitationType {
