@@ -78,6 +78,10 @@ model Teacher{
   establishement String
  
 }
+
+model Projet {
+  
+}
  
 //enum TeacherLevel{
 //  AssociateProfessor
