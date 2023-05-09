@@ -41,6 +41,11 @@ export class ProjectsController {
         this.projectsService.validateProject(user.sub, +id, body);
     }
 
+    @Get(':id/tasks')
+    async getProjectTasks(@Param('id') id: string) {
+        this.projectsService.getProjectTasks(+id);
+    }
+
     @Patch(':id')
     async updateProject(
         @Request() req,

@@ -132,4 +132,14 @@ export class ProjectsService {
             where: { tag: 'PROJECT_PERIODS' },
         });
     }
+
+    async getProjectTasks(projectId: number) {
+        try {
+            return await this.prismaService.projectTask.findMany({
+                where: { project_id: projectId },
+            });
+        } catch (_) {
+            throw new NotFoundException();
+        }
+    }
 }
