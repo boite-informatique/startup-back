@@ -2,10 +2,8 @@ import { ProjectType } from '@prisma/client';
 import {
     ArrayMaxSize,
     ArrayNotEmpty,
-    IsArray,
     IsEmail,
     IsIn,
-    IsInt,
     IsOptional,
     IsString,
 } from 'class-validator';
