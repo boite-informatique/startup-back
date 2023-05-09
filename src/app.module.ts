@@ -10,6 +10,7 @@ import emailConfig from './config/email.config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ProjectsModule } from './projects/projects.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
     imports: [
@@ -33,6 +34,7 @@ import { ProjectsModule } from './projects/projects.module';
             }),
         }),
         ProjectsModule,
+        TasksModule,
     ],
     providers: [
         {
