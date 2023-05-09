@@ -54,6 +54,11 @@ export class ProjectsController {
         );
     }
 
+    @Get('settings')
+    async getProjectPeriods() {
+        return await this.projectsService.getProjectPeriods();
+    }
+
     @Put('settings')
     async updateProjectPeriods(@Body() body: UpdateProjectPeriodsDto) {
         return await this.projectsService.updateProjectPeriods(body);

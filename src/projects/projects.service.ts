@@ -120,6 +120,12 @@ export class ProjectsService {
         } catch (error) {}
     }
 
+    async getProjectPeriods() {
+        return await this.prismaService.settings.findUnique({
+            where: { tag: 'PROJECT_PERIODS' },
+        });
+    }
+
     async updateProjectPeriods(body: UpdateProjectPeriodsDto) {
         this.prismaService.settings.update({
             data: { value: body as unknown as Prisma.JsonValue },
