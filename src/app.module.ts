@@ -11,6 +11,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './tasks/tasks.module';
+import { EstablishmentsModule } from './establishments/establishments.module';
 
 @Module({
     imports: [
@@ -35,6 +36,7 @@ import { TasksModule } from './tasks/tasks.module';
         }),
         ProjectsModule,
         TasksModule,
+        EstablishmentsModule,
     ],
     providers: [
         {
