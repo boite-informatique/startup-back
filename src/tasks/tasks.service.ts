@@ -30,7 +30,16 @@ export class TasksService {
         if (task) return task;
         throw new NotFoundException();
     }
+    async findataskComments(id: number) {
+        const comments = await this.prismaService.projectTask
+            .findUnique({
+                where: { id },
+            })
+            .comments();
 
+        if (comments) return comments;
+        throw new NotFoundException();
+    }
     async update(id: number, updateTaskDto: UpdateTaskDto) {
         try {
             return await this.prismaService.projectTask.update({

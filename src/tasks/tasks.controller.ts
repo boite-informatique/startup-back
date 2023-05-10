@@ -12,6 +12,7 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Comment } from '@prisma/client';
 
 @ApiTags('project tasks')
 @Controller('tasks')
@@ -27,7 +28,10 @@ export class TasksController {
     findOne(@Param('id') id: string) {
         return this.tasksService.findOne(+id);
     }
-
+    @Get(':id/comments')
+    findataskComments(@Param('id') id: string): Promise<Comment[]> {
+        return this.tasksService.findataskComments(+id);
+    }
     @Patch(':id')
     update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
         return this.tasksService.update(+id, updateTaskDto);
