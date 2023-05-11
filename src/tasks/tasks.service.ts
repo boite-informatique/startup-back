@@ -36,8 +36,7 @@ export class TasksService {
                 where: { id },
             })
             .comments();
-
-        if (comments) return comments;
+        if (comments.length > 0) return comments;
         throw new NotFoundException();
     }
     async update(id: number, updateTaskDto: UpdateTaskDto) {
