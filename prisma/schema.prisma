@@ -44,6 +44,7 @@ model User {
   ProjectHistory      ProjectHistory[]
   ProjectValidation   ProjectValidation[]
   ProjectTask         ProjectTask[]
+  ProjectProgress     ProjectProgress[]
 }
 
 enum UserType {
@@ -104,6 +105,7 @@ model Project {
   history         ProjectHistory[]
   ProjectInvitees ProjectInvitees[]
   ProjectTask     ProjectTask[]
+  ProjectProgress ProjectProgress[]
 }
 
 enum ProjectType {
@@ -157,17 +159,27 @@ model ProjectTask {
   user_id Int
   user    User @relation(fields: [user_id], references: [id])
 
-  title String
+  title       String
   description String
-  deadline DateTime @db.Date
-  resources String[]
-  
+  deadline    DateTime @db.Date
+  resources   String[]
+}
+
+model ProjectProgress {
+  id         Int      @id @default(autoincrement())
+  project_id Int
+  project    Project  @relation(fields: [project_id], references: [id])
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id])
+  percentage Int 
+  note       String
+  created_at DateTime @default(now())
 }
 
 model Settings {
   id Int @id @default(autoincrement())
 
-  tag String @unique
+  tag   String @unique
   value Json
 }
 
