@@ -1,14 +1,19 @@
 import {
     IsBoolean,
     IsDate,
+    IsDefined,
     IsEmail,
     IsEnum,
+    IsIn,
     IsObject,
     IsOptional,
     IsString,
     MinLength,
+    ValidateNested,
 } from 'class-validator';
 import { UserType } from '@prisma/client';
+import { StaffDto, StudentDto, TeacherDto } from './user-types.dto.';
+import { Type } from 'class-transformer';
 
 export class CreateUserDto {
     @IsEmail()
@@ -24,16 +29,16 @@ export class CreateUserDto {
     date_of_birth: Date;
     @IsString()
     type: UserType;
-    activated?: boolean;
     @IsString()
     phone: string;
     @IsString()
     @IsOptional()
     avatar?: string;
-    @IsOptional()
-    roles: any[];
-    @IsOptional()
-    info: any;
-    @IsOptional()
-    projects: any[];
+    @Type(({ object }) => {
+        if (object.type == 'student') return StudentDto;
+        if (object.type == 'teacher') return TeacherDto;
+        return StaffDto;
+    })
+    @ValidateNested()
+    info: StudentDto | TeacherDto | StaffDto;
 }

@@ -16,6 +16,7 @@ import { UserNotFoundException } from './exceptions/userNotFound.exception';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ResetDto } from './dto/password-reset.dto';
 import { ActivateDto } from './dto/activate-account.dto';
+import { StaffDto, StudentDto, TeacherDto } from './dto/user-types.dto.';
 
 const FORGOT_PASSWORD_CACHE_KEY = 'forgetPassword:';
 const ACTIVATE_CACHE_KEY = 'activate:';
@@ -50,15 +51,15 @@ export class UsersService {
                 phone: createUserDto.phone,
                 student:
                     createUserDto.type == 'student'
-                        ? { create: createUserDto.info }
+                        ? { create: createUserDto.info as StudentDto }
                         : undefined,
                 teacher:
                     createUserDto.type == 'teacher'
-                        ? { create: createUserDto.info }
+                        ? { create: createUserDto.info as TeacherDto }
                         : undefined,
                 staff:
                     createUserDto.type == 'staff'
-                        ? { create: createUserDto.info }
+                        ? { create: createUserDto.info as StaffDto }
                         : undefined,
             },
         });
