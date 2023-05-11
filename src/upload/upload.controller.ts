@@ -1,9 +1,12 @@
 import {
+    BadRequestException,
     Controller,
     FileTypeValidator,
     MaxFileSizeValidator,
     ParseFilePipe,
     Post,
+    Req,
+    Res,
     UploadedFile,
     UploadedFiles,
     UseInterceptors,
@@ -19,33 +22,53 @@ import { multerConfig } from './multer.config';
 @Controller('upload')
 export class UploadController {
     @Post('image')
-    @UseInterceptors(FileInterceptor('file')) // specify the name of the file field in the form
+    @UseInterceptors(
+        FileInterceptor('file', {
+            fileFilter: (req, file, cb) => {
+                if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+                    return cb(
+                        new BadRequestException(
+                            'Only image files are allowed!',
+                        ),
+                        false,
+                    );
+                } else {
+                    cb(null, true);
+                }
+            },
+        }),
+    )
     uploadImage(
-        @UploadedFile(
-            new ParseFilePipe({
-                validators: [new FileTypeValidator({ fileType: 'image' })],
-            }),
-        )
+        @UploadedFile()
         file: Express.Multer.File,
     ) {
-        return file.filename; // do something with the uploaded file
+        return file.filename;
     }
 
     @Post('pdf')
-    @UseInterceptors(FileInterceptor('file')) // specify the name of the file field in the form
+    @UseInterceptors(
+        FileInterceptor('file', {
+            fileFilter: (req, file, cb) => {
+                if (!(file.mimetype === 'application/pdf')) {
+                    return cb(
+                        new BadRequestException('Only pdf files are allowed!'),
+                        false,
+                    );
+                } else {
+                    cb(null, true);
+                }
+            },
+        }),
+    )
     uploadPdf(
-        @UploadedFile(
-            new ParseFilePipe({
-                validators: [new FileTypeValidator({ fileType: 'pdf' })],
-            }),
-        )
+        @UploadedFile()
         file: Express.Multer.File,
     ) {
-        return file.filename; // do something with the uploaded file
+        return file.filename;
     }
 
     @Post('document')
-    @UseInterceptors(FilesInterceptor('files')) // specify the name of the file field in the form
+    @UseInterceptors(FilesInterceptor('files'))
     uploadDocument(
         @UploadedFiles(
             new ParseFilePipe({
