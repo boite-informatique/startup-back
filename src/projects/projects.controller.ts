@@ -15,6 +15,7 @@ import { ValidationDto } from './dto/project-validation.dto';
 import { UpdateProjectPeriodsDto } from './dto/update-project-periods.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dto';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -69,5 +70,31 @@ export class ProjectsController {
     @Put('settings')
     async updateProjectPeriods(@Body() body: UpdateProjectPeriodsDto) {
         return await this.projectsService.updateProjectPeriods(body);
+    }
+
+    @Post(':id/defense-authorization')
+    async createDefenseAuthorization(
+        @Param('id') projectId: string,
+        @Request() req,
+        @Body() body,
+    ) {
+        return await this.projectsService.createDefenseAuthorization(
+            body,
+            +projectId,
+            req.user.sub,
+        );
+    }
+
+    @Get(':id/defense-doc')
+    async getDefenceDocument(@Param('id') id: string) {
+        return await this.projectsService.getDefenseDocument(+id);
+    }
+
+    @Post(':id/defense-doc')
+    async createDefenseDocument(
+        @Param('id') id: string,
+        @Body() body: createDefenseDocument,
+    ) {
+        return this.projectsService.createDefenseDocument(+id, body);
     }
 }

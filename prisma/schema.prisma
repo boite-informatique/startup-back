@@ -25,25 +25,26 @@ model Permission {
 
 model User {
   id                  Int                 @id @default(autoincrement())
-  email               String              @unique
-  password            String
-  first_name          String
-  last_name           String
-  date_of_birth       DateTime            @db.Date
-  type                UserType
-  activated           Boolean             @default(false)
-  phone               String
-  avatar              String?
-  student             Student?
-  teacher             Teacher?
-  staff               Staff?
-  roles               Role[]
-  owned_projects      Project[]           @relation("ownership")
-  member_in_projects  Project[]           @relation("membership")
-  supervised_projects Project[]           @relation("supervision")
-  ProjectHistory      ProjectHistory[]
-  ProjectValidation   ProjectValidation[]
-  ProjectTask         ProjectTask[]
+  email                 String              @unique
+  password              String
+  first_name            String
+  last_name             String
+  date_of_birth         DateTime            @db.Date
+  type                  UserType
+  activated             Boolean             @default(false)
+  phone                 String
+  avatar                String?
+  student               Student?
+  teacher               Teacher?
+  staff                 Staff?
+  roles                 Role[]
+  owned_projects        Project[]           @relation("ownership")
+  member_in_projects    Project[]           @relation("membership")
+  supervised_projects   Project[]           @relation("supervision")
+  ProjectHistory        ProjectHistory[]
+  ProjectValidation     ProjectValidation[]
+  ProjectTask           ProjectTask[]
+  DefenseAuthorization  DefenseAuthorization[]
 }
 
 enum UserType {
@@ -96,14 +97,16 @@ model Project {
   logo         String?
   created_at   DateTime    @default(now())
 
-  owner_id        Int
-  owner           User                @relation(fields: [owner_id], references: [id], name: "ownership")
-  supervisors     User[]              @relation(name: "supervision")
-  validation      ProjectValidation[]
-  members         User[]              @relation(name: "membership")
-  history         ProjectHistory[]
-  ProjectInvitees ProjectInvitees[]
-  ProjectTask     ProjectTask[]
+  owner_id             Int
+  owner                User                @relation(fields: [owner_id], references: [id], name: "ownership")
+  supervisors          User[]              @relation(name: "supervision")
+  validation           ProjectValidation[]
+  members              User[]              @relation(name: "membership")
+  history              ProjectHistory[]
+  ProjectInvitees      ProjectInvitees[]
+  ProjectTask          ProjectTask[]
+  DefenseAuthorization DefenseAuthorization?
+  DefenseDocument      DefenseDocument?
 }
 
 enum ProjectType {
@@ -169,6 +172,27 @@ model Settings {
 
   tag String @unique
   value Json
+}
+
+model DefenseAuthorization{
+  id            Int @id @default(autoincrement())
+  project_id    Int @unique
+  project       Project @relation(fields: [project_id], references: [id])
+
+  user_id       Int
+  user          User @relation(fields: [user_id], references: [id])
+
+  uploadedFile String
+}
+
+model DefenseDocument{
+    id            Int @id @default(autoincrement())
+    project_id    Int @unique
+    project       Project @relation(fields: [project_id], references: [id])
+    bmc           String
+    memoire       String
+    label         String
+  
 }
 
 enum ProjectInvitationType {
