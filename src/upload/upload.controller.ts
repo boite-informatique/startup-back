@@ -2,11 +2,14 @@ import {
     BadRequestException,
     Controller,
     FileTypeValidator,
+    Get,
     MaxFileSizeValidator,
+    Param,
     ParseFilePipe,
     Post,
     Req,
     Res,
+    StreamableFile,
     UploadedFile,
     UploadedFiles,
     UseInterceptors,
@@ -17,10 +20,22 @@ import {
     FilesInterceptor,
 } from '@nestjs/platform-express';
 import { Express } from 'express';
+import { createReadStream } from 'fs';
+import { join } from 'path';
+import { Public } from 'src/iam/authentication/decorators/public.decorator';
 import { multerConfig } from './multer.config';
 
 @Controller('upload')
 export class UploadController {
+    @Get(':filename')
+    getFile(@Param('filename') filename: string): StreamableFile {
+        const file = createReadStream(
+            join(process.cwd(), 'file-uploads', filename),
+        );
+        console.log(join(process.cwd(), filename));
+        return new StreamableFile(file);
+    }
+
     @Post('image')
     @UseInterceptors(
         FileInterceptor('file', {
