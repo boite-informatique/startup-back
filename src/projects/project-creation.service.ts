@@ -8,6 +8,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { projectInviteInput } from './types/sendProjectInvite.type';
 import { MailerService } from '@nestjs-modules/mailer';
+import { periodsType } from './types/periodes.type';
+import { PeriodError } from './errors/periode-error';
 
 @Injectable()
 export class ProjectCreationService {
@@ -17,6 +19,8 @@ export class ProjectCreationService {
     ) {}
 
     async createProject(user: any, body: CreateProjectDto) {
+        
+        
         const alreadyRegisteredMembers = await this.getNewProjectMembers(
             body.members,
         );
@@ -72,7 +76,15 @@ export class ProjectCreationService {
         return project;
     }
 
-    createProjectQuery(ownerId: number, body: CreateProjectDto) {
+    async createProjectQuery(ownerId: number, body: CreateProjectDto) {
+        const settings  = await this.prismaService.settings.findUnique({
+            where: { tag: 'PROJECT_PERIODS' },
+        })
+        const periodes = settings.value as periodsType;
+        const today = new Date();
+        const s=new Date(periodes.submission)
+        const v=new Date(periodes.validation)
+        if(s<today && today<v){ 
         return this.prismaService.project.create({
             data: {
                 brand_name: body.brand_name,
@@ -94,7 +106,7 @@ export class ProjectCreationService {
                 },
             },
         });
-    }
+    }else{throw new PeriodError('out of period error')}}
 
     async getNewProjectSupervisors(supervisorEmails: string[]) {
         const supervisors = await this.prismaService.user.findMany({

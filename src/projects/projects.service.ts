@@ -13,6 +13,8 @@ import { UpdateProjectPeriodsDto } from './dto/update-project-periods.dto';
 import { Prisma } from '@prisma/client';
 import { JSONValue } from 'postgres';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { periodsType } from './types/periodes.type';
+import { PeriodError } from './errors/periode-error';
 
 @Injectable()
 export class ProjectsService {
@@ -112,26 +114,51 @@ export class ProjectsService {
         body: UpdateProjectDto,
         projectId: number,
     ) {
+        const settings  = await this.prismaService.settings.findUnique({
+            where: { tag: 'PROJECT_PERIODS' },
+        })
+        const periodes = settings.value as periodsType;
+        const today = new Date();
+        const s=new Date(periodes.submission)
+        const v=new Date(periodes.validation)
+        const a=new Date(periodes.appeal)
+        const av=new Date(periodes.appealValidation)
+        const e=new Date(periodes.end)
+        if((s<today && today<v)||(a<today && today<av)){
         try {
             return await this.prismaService.project.updateMany({
                 where: { id: projectId, owner_id: userId },
                 data: body,
             });
-        } catch (error) {}
+        } catch (error) {throw new NotFoundException('Project not found')}}else{throw new PeriodError('out of period error')}
     }
 
     async getProjectPeriods() {
-        return await this.prismaService.settings.findUnique({
+       try{ return await this.prismaService.settings.findUnique({
             where: { tag: 'PROJECT_PERIODS' },
-        });
+        });}catch(error){throw new NotFoundException('Project not found')}
     }
 
     async updateProjectPeriods(body: UpdateProjectPeriodsDto) {
-        this.prismaService.settings.update({
-            data: { value: body as unknown as Prisma.JsonValue },
-            where: { tag: 'PROJECT_PERIODS' },
-        });
-    }
+        const { submission, validation, appeal, appealValidation, end } = body;
+        const s=new Date(submission)
+        const v=new Date(validation)
+        const a=new Date(appeal)
+        const av=new Date(appealValidation)
+        const e=new Date(end)
+
+        if (
+            s < v &&
+            v < a &&
+            a < av &&
+            av < e
+        ) {
+           return this.prismaService.settings.update({
+                data: { value: body as unknown as Prisma.JsonValue },
+                where: { tag: 'PROJECT_PERIODS' },
+            });
+        }else { throw new PeriodError('periods error')}  }
+    
 
     async getProjectTasks(projectId: number) {
         try {
@@ -142,4 +169,19 @@ export class ProjectsService {
             throw new NotFoundException();
         }
     }
+    async deleteProject(id: number){ 
+        const settings  = await this.prismaService.settings.findUnique({
+            where: { tag: 'PROJECT_PERIODS' },
+        })
+        const periodes = settings.value as periodsType;
+        const today = new Date();
+        const s=new Date(periodes.submission)
+        const v=new Date(periodes.validation)
+        if(s<today && today<v){ try {
+        return await this.prismaService.project.delete({
+            where: { id: id },
+        })
+    } catch (_) {
+        throw new NotFoundException();
+    }}else{throw new PeriodError('out of period error')}}
 }
