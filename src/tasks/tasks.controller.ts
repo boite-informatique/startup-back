@@ -12,7 +12,7 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { Comment } from '@prisma/client';
+import { comment } from '@prisma/client';
 
 @ApiTags('project tasks')
 @Controller('tasks')
@@ -29,7 +29,7 @@ export class TasksController {
         return this.tasksService.findOne(+id);
     }
     @Get(':id/comments')
-    findataskComments(@Param('id') id: string): Promise<Comment[]> {
+    findataskComments(@Param('id') id: string): Promise<comment[]> {
         return this.tasksService.findataskComments(+id);
     }
     @Patch(':id')
