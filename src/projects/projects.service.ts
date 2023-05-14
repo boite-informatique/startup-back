@@ -10,10 +10,11 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectCreationService } from './project-creation.service';
 import { ValidationDto } from './dto/project-validation.dto';
 import { UpdateProjectPeriodsDto } from './dto/update-project-periods.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, ProjectProgress } from '@prisma/client';
 import { JSONValue } from 'postgres';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dto';
+import { CreateProjectProgressDto } from 'src/project-progress/dto/create-project-progress.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -30,11 +31,19 @@ export class ProjectsService {
             data: {
                 project_id: projectId,
                 ...body,
+            }})
+        }
+  
+    async getProjectProgress(id: number) {
+        return await this.prismaService.projectProgress.findMany({
+            where: { project_id: id },
+            orderBy: {
+                created_at: 'desc',
             },
         });
     }
 
-    async getDefenseDocument(projectId: number) {
+async getDefenseDocument(projectId: number) {
         return await this.prismaService.defenseDocument.findUnique({
             where: { project_id: projectId },
         });
@@ -42,6 +51,21 @@ export class ProjectsService {
 
     async createDefenseAuthorization(body: any, projectId: number, sub: any) {
         return await this.prismaService.defenseAuthorization.create({
+            data: {
+                ...body,
+                project_id: projectId,
+                user_id: sub,
+            },
+        });
+    }
+
+  
+    async createProjectProgress(
+        body: CreateProjectProgressDto,
+        projectId: number,
+        sub: any,
+    ) {
+        return await this.prismaService.projectProgress.create({
             data: {
                 ...body,
                 project_id: projectId,
@@ -124,14 +148,16 @@ export class ProjectsService {
         body: ValidationDto,
     ) {
         try {
-            return await this.prismaService.projectValidation.create({
-                data: {
-                    ...body,
-                    project: { connect: { id: projectId } },
-                    validator: { connect: { id: userId } },
-                },
-            });
-        } catch (error) {
+            const projectValidation =
+                await this.prismaService.projectValidation.create({
+                    data: {
+                        ...body,
+                        project_id: projectId,
+                        validator_id: userId,
+                    },
+                });
+            return projectValidation;
+        } catch (err) {
             throw new NotFoundException('Project not found');
         }
     }
@@ -164,11 +190,14 @@ export class ProjectsService {
 
     async getProjectTasks(projectId: number) {
         try {
-            return await this.prismaService.projectTask.findMany({
+            const tasks = await this.prismaService.projectTask.findMany({
                 where: { project_id: projectId },
             });
+            if (tasks.length == 0)
+                throw new NotFoundException('No tasks found');
+            return tasks;
         } catch (_) {
-            throw new NotFoundException();
+            throw new NotFoundException('No project found');
         }
     }
 }

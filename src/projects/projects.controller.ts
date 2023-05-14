@@ -16,6 +16,7 @@ import { UpdateProjectPeriodsDto } from './dto/update-project-periods.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dto';
+import { CreateProjectProgressDto } from 'src/project-progress/dto/create-project-progress.dto';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -37,16 +38,16 @@ export class ProjectsController {
 
     @Post(':id/validate')
     async validateProject(
-        @Request() user,
+        @Request() req,
         @Body() body: ValidationDto,
         @Param('id') id: string,
     ) {
-        this.projectsService.validateProject(user.sub, +id, body);
+        return this.projectsService.validateProject(req.user.sub, +id, body);
     }
 
     @Get(':id/tasks')
     async getProjectTasks(@Param('id') id: string) {
-        this.projectsService.getProjectTasks(+id);
+        return this.projectsService.getProjectTasks(+id);
     }
 
     @Patch(':id')
@@ -96,5 +97,23 @@ export class ProjectsController {
         @Body() body: createDefenseDocument,
     ) {
         return this.projectsService.createDefenseDocument(+id, body);
+    }
+  
+    @Get(':id/progress')
+    async getProjectProgress(@Param('id') id: string) {
+        return await this.projectsService.getProjectProgress(+id);
+    }
+
+    @Post(':id/progress')
+    async createProjectProgress(
+        @Body() body: CreateProjectProgressDto,
+        @Param('id') id: string,
+        @Request() req,
+    ) {
+        return await this.projectsService.createProjectProgress(
+            body,
+            +id,
+            req.user.sub,
+        );
     }
 }
