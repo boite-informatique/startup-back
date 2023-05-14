@@ -1,17 +1,10 @@
-import {
-    BadRequestException,
-    ConflictException,
-    ForbiddenException,
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectCreationService } from './project-creation.service';
 import { ValidationDto } from './dto/project-validation.dto';
 import { UpdateProjectPeriodsDto } from './dto/update-project-periods.dto';
-import { Prisma, ProjectProgress } from '@prisma/client';
-import { JSONValue } from 'postgres';
+import { Prisma } from '@prisma/client';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dto';
 import { CreateProjectProgressDto } from 'src/project-progress/dto/create-project-progress.dto';
@@ -31,9 +24,10 @@ export class ProjectsService {
             data: {
                 project_id: projectId,
                 ...body,
-            }})
-        }
-  
+            },
+        });
+    }
+
     async getProjectProgress(id: number) {
         return await this.prismaService.projectProgress.findMany({
             where: { project_id: id },
@@ -43,7 +37,7 @@ export class ProjectsService {
         });
     }
 
-async getDefenseDocument(projectId: number) {
+    async getDefenseDocument(projectId: number) {
         return await this.prismaService.defenseDocument.findUnique({
             where: { project_id: projectId },
         });
@@ -59,7 +53,6 @@ async getDefenseDocument(projectId: number) {
         });
     }
 
-  
     async createProjectProgress(
         body: CreateProjectProgressDto,
         projectId: number,
