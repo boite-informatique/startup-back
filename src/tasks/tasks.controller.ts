@@ -17,12 +17,14 @@ import { Comment } from '@prisma/client';
 import { CreateTaskFinishedDto } from './dto/create-task-finished.dto';
 import { UpdateTaskFinishedDto } from './dto/update-task-finished.dto';
 
-
 @ApiTags('project tasks')
 @Controller('tasks')
 export class TasksController {
-    constructor(private readonly tasksService: TasksService , private readonly tasksFinishedService: TasksFinishedService) {}
-  
+    constructor(
+        private readonly tasksService: TasksService,
+        private readonly tasksFinishedService: TasksFinishedService,
+    ) {}
+
     @Post()
     create(@Body() createTaskDto: CreateTaskDto, @Req() user: any) {
         return this.tasksService.create(createTaskDto, user.sub);
@@ -47,18 +49,21 @@ export class TasksController {
     }
     @Post(':id/finished')
     createTaskFinished(@Body() createTaskFinishedDto: CreateTaskFinishedDto) {
-        return this.tasksFinishedService.create(createTaskFinishedDto)
+        return this.tasksFinishedService.create(createTaskFinishedDto);
     }
     @Get(':id/finished')
-    findTaskFinished(@Param('id') id: string){
-        return this.tasksFinishedService.find(+id)
+    findTaskFinished(@Param('id') id: string) {
+        return this.tasksFinishedService.find(+id);
     }
     @Patch(':id/finished')
-    updateteTaskFinished(@Param('id') id: string,@Body() updateTaskFinishedDto: UpdateTaskFinishedDto) {
-        return this.tasksFinishedService.update(+id,updateTaskFinishedDto)
+    updateteTaskFinished(
+        @Param('id') id: string,
+        @Body() updateTaskFinishedDto: UpdateTaskFinishedDto,
+    ) {
+        return this.tasksFinishedService.update(+id, updateTaskFinishedDto);
     }
     @Delete(':id/finished')
-    deleteTaskFinished(@Param('id') id: string){
-        return this.tasksFinishedService.delete(+id)
+    deleteTaskFinished(@Param('id') id: string) {
+        return this.tasksFinishedService.delete(+id);
     }
 }

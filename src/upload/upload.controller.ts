@@ -3,12 +3,9 @@ import {
     Controller,
     FileTypeValidator,
     Get,
-    MaxFileSizeValidator,
     Param,
     ParseFilePipe,
     Post,
-    Req,
-    Res,
     StreamableFile,
     UploadedFile,
     UploadedFiles,
@@ -22,8 +19,6 @@ import {
 import { Express } from 'express';
 import { createReadStream } from 'fs';
 import { join } from 'path';
-import { Public } from 'src/iam/authentication/decorators/public.decorator';
-import { multerConfig } from './multer.config';
 
 @Controller('upload')
 export class UploadController {

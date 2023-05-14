@@ -1,10 +1,10 @@
-import { IsInt, IsString } from "class-validator"
+import { IsInt, IsString } from 'class-validator';
 
 export class CreateTaskFinishedDto {
     @IsInt()
     taskId: number;
     @IsString()
-    description:  string
+    description: string;
     @IsString({ each: true })
-    resources:  string[]
+    resources: string[];
 }

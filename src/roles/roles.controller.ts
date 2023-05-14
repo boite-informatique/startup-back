@@ -11,7 +11,6 @@ import {
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { Role } from './dto/role-output.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionsGuard } from 'src/permissions/guards/permissions.guard';
 import { RequirePermissions } from 'src/permissions/decorators/required-permissions.decorator';

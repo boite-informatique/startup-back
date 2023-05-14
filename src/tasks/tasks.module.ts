@@ -6,7 +6,7 @@ import { TasksFinishedService } from './tasks-finished.service';
 
 @Module({
     controllers: [TasksController],
-    providers: [TasksService,TasksFinishedService],
+    providers: [TasksService, TasksFinishedService],
     imports: [PrismaModule],
 })
 export class TasksModule {}

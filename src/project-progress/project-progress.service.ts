@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateProjectProgressDto } from './dto/update-project-progess.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ProjectProgress } from '@prisma/client';
 
 @Injectable()
 export class ProjectProgressService {

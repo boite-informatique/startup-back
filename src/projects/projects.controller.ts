@@ -98,7 +98,7 @@ export class ProjectsController {
     ) {
         return this.projectsService.createDefenseDocument(+id, body);
     }
-  
+
     @Get(':id/progress')
     async getProjectProgress(@Param('id') id: string) {
         return await this.projectsService.getProjectProgress(+id);

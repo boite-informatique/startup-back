@@ -1,14 +1,4 @@
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Patch,
-    Post,
-} from '@nestjs/common';
-import { get } from 'http';
-import { CreateProjectProgressDto } from './dto/create-project-progress.dto';
+import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
 import { UpdateProjectProgressDto } from './dto/update-project-progess.dto';
 import { ProjectProgressService } from './project-progress.service';
 

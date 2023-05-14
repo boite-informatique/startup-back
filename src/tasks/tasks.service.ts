@@ -25,7 +25,7 @@ export class TasksService {
     async findOne(id: number) {
         const task = await this.prismaService.projectTask.findUnique({
             where: { id },
-            include:{TaskFinished : true}
+            include: { TaskFinished: true },
         });
 
         if (task) return task;
