@@ -37,16 +37,16 @@ export class ProjectsController {
 
     @Post(':id/validate')
     async validateProject(
-        @Request() user,
+        @Request() req,
         @Body() body: ValidationDto,
         @Param('id') id: string,
     ) {
-        this.projectsService.validateProject(user.sub, +id, body);
+        return this.projectsService.validateProject(req.user.sub, +id, body);
     }
 
     @Get(':id/tasks')
     async getProjectTasks(@Param('id') id: string) {
-        this.projectsService.getProjectTasks(+id);
+        return this.projectsService.getProjectTasks(+id);
     }
 
     @Patch(':id')

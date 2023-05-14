@@ -156,7 +156,7 @@ export class ProjectCreationService {
         await this.mailService.sendMail({
             to: invite.email,
             subject: 'You have been invited to a project',
-            text: `You are invited to join a project as a ${invite.type}, visit this link to register an account http://localhost:5173/register?email=${invite.email}&projectId=${invite.project_id}&type=${invite.type}&token=${invite.token}`,
+            text: `You are invited to join a project as a ${invite.type}, visit this link to register an account http://localhost:5173/register?invitation=true&email=${invite.email}&projectId=${invite.project_id}&type=${invite.type}&token=${invite.token}`,
         });
     }
 }

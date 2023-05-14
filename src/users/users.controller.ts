@@ -34,7 +34,14 @@ export class UsersController {
 
     @Public()
     @Post()
-    async createUser(@Body() createUserDto: CreateUserDto) {
+    async createUser(
+        @Body() createUserDto: CreateUserDto,
+        @Query('invitation') invitation: string,
+    ) {
+        if (invitation && invitation == 'true')
+            return await this.usersService.createAccountWithProjectInvite(
+                createUserDto,
+            );
         return await this.usersService.createUser(createUserDto);
     }
     @Get()
