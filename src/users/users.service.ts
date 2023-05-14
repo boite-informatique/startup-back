@@ -66,6 +66,48 @@ export class UsersService {
 
         return user;
     }
+
+    async createAccountWithProjectInvite(createUserDto: CreateUserDto) {
+        const user = await this.createUser(createUserDto);
+
+        const invitation = await this.prismaServive.projectInvitees.findFirst({
+            where: {
+                email: user.email,
+                token: createUserDto.invitation.token,
+                project_id: createUserDto.invitation.projectId,
+            },
+        });
+
+        if (invitation) {
+            await this.prismaServive.projectInvitees.delete({
+                where: { id: invitation.id },
+            });
+
+            try {
+                await this.prismaServive.project.update({
+                    where: { id: invitation.project_id },
+                    data: {
+                        members: {
+                            connect:
+                                invitation.type == 'member'
+                                    ? { id: user.id }
+                                    : undefined,
+                        },
+                        supervisors: {
+                            connect:
+                                invitation.type == 'supervisor'
+                                    ? { id: user.id }
+                                    : undefined,
+                        },
+                    },
+                });
+            } finally {
+            }
+        }
+
+        return user;
+    }
+
     async findUsers(userQueryDto: UserQueryDto) {
         const users = await this.prismaServive.user.findMany({
             take: userQueryDto.take,

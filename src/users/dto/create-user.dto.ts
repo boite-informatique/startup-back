@@ -1,11 +1,7 @@
 import {
-    IsBoolean,
-    IsDate,
     IsDefined,
     IsEmail,
-    IsEnum,
-    IsIn,
-    IsObject,
+    IsInt,
     IsOptional,
     IsString,
     MinLength,
@@ -14,6 +10,15 @@ import {
 import { UserType } from '@prisma/client';
 import { StaffDto, StudentDto, TeacherDto } from './user-types.dto.';
 import { Type } from 'class-transformer';
+
+export class InvitationDto {
+    @IsInt()
+    @IsDefined()
+    projectId: number;
+    @IsString()
+    @IsDefined()
+    token: string;
+}
 
 export class CreateUserDto {
     @IsEmail()
@@ -41,4 +46,9 @@ export class CreateUserDto {
     })
     @ValidateNested()
     info: StudentDto | TeacherDto | StaffDto;
+
+    @Type(() => InvitationDto)
+    @ValidateNested()
+    @IsOptional()
+    invitation?: InvitationDto;
 }
