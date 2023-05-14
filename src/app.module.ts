@@ -12,6 +12,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './tasks/tasks.module';
 import { UploadModule } from './upload/upload.module';
+import { EstablishmentsModule } from './establishments/establishments.module';
+
 
 @Module({
     imports: [
@@ -37,6 +39,7 @@ import { UploadModule } from './upload/upload.module';
         ProjectsModule,
         TasksModule,
         UploadModule,
+        EstablishmentsModule,
     ],
     providers: [
         {

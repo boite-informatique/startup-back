@@ -44,6 +44,7 @@ model User {
   ProjectHistory      ProjectHistory[]
   ProjectValidation   ProjectValidation[]
   ProjectTask         ProjectTask[]
+  comments            Comment[]
 }
 
 enum UserType {
@@ -157,17 +158,18 @@ model ProjectTask {
   user_id Int
   user    User @relation(fields: [user_id], references: [id])
 
-  title String
+  title       String
   description String
-  deadline DateTime @db.Date
-  resources String[]
-  
+  deadline    DateTime @db.Date
+  resources   String[]
+  TaskFinished TaskFinished?
+  comments Comment[]
 }
 
 model Settings {
   id Int @id @default(autoincrement())
 
-  tag String @unique
+  tag   String @unique
   value Json
 }
 
@@ -185,4 +187,26 @@ enum ProjectValidationDecision {
 enum ProjectValidationReservation {
   major
   minor
+}
+
+model Comment {
+  id      Int         @id @default(autoincrement())
+  task_id Int
+  task    ProjectTask @relation(fields: [task_id], references: [id], onDelete: Cascade)
+
+  author_id Int
+  author    User @relation(fields: [author_id], references: [id])
+
+  body       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt()
+}
+
+model TaskFinished {
+  id Int @id @default(autoincrement())
+  task_id Int @unique
+  task    ProjectTask @relation(fields: [task_id], references: [id])
+  description  String
+  resources String[]
+
 }

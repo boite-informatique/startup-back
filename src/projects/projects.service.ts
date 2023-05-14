@@ -95,14 +95,16 @@ export class ProjectsService {
         body: ValidationDto,
     ) {
         try {
-            return await this.prismaService.projectValidation.create({
-                data: {
-                    ...body,
-                    project: { connect: { id: projectId } },
-                    validator: { connect: { id: userId } },
-                },
-            });
-        } catch (error) {
+            const projectValidation =
+                await this.prismaService.projectValidation.create({
+                    data: {
+                        ...body,
+                        project_id: projectId,
+                        validator_id: userId,
+                    },
+                });
+            return projectValidation;
+        } catch (err) {
             throw new NotFoundException('Project not found');
         }
     }
@@ -135,11 +137,14 @@ export class ProjectsService {
 
     async getProjectTasks(projectId: number) {
         try {
-            return await this.prismaService.projectTask.findMany({
+            const tasks = await this.prismaService.projectTask.findMany({
                 where: { project_id: projectId },
             });
+            if (tasks.length == 0)
+                throw new NotFoundException('No tasks found');
+            return tasks;
         } catch (_) {
-            throw new NotFoundException();
+            throw new NotFoundException('No project found');
         }
     }
 }
