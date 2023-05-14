@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     Patch,
@@ -61,13 +62,17 @@ export class ProjectsController {
         );
     }
 
-    @Get('settings')
+    @Get('periods')
     async getProjectPeriods() {
         return await this.projectsService.getProjectPeriods();
     }
 
-    @Put('settings')
+    @Put('periods')
     async updateProjectPeriods(@Body() body: UpdateProjectPeriodsDto) {
-        return await this.projectsService.updateProjectPeriods(body);
+        return await this.projectsService.updateProjectPeriods(body);}
+    @Delete(':id')
+    async deleteProject(@Param('id') id: string){
+        return await this.projectsService.deleteProject(+id)
     }
+
 }
