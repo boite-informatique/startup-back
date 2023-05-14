@@ -98,4 +98,41 @@ export class UploadController {
     ) {
         return files.map((file) => file.filename); // do something with the uploaded file
     }
+
+    @Post('defensedoc')
+    @UseInterceptors(
+        FileFieldsInterceptor(
+            [
+                { name: 'memoire', maxCount: 1 },
+                { name: 'bmc', maxCount: 1 },
+                { name: 'label', maxCount: 1 },
+                { name: 'brevet', maxCount: 1 },
+            ],
+            {
+                fileFilter: (req, file, cb) => {
+                    if (!(file.mimetype === 'application/pdf')) {
+                        return cb(
+                            new BadRequestException(
+                                'Only pdf files are allowed!',
+                            ),
+                            false,
+                        );
+                    } else {
+                        cb(null, true);
+                    }
+                },
+            },
+        ),
+    )
+    uploadDocDef(
+        @UploadedFiles()
+        files: {
+            memoire: Express.Multer.File[];
+            bmc?: Express.Multer.File[];
+            label?: Express.Multer.File[];
+            brevet?: Express.Multer.File[];
+        },
+    ) {
+        return files.memoire[0].filename + ' ' + files.bmc[0].filename;
+    }
 }

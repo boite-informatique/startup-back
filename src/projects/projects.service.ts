@@ -13,8 +13,8 @@ import { UpdateProjectPeriodsDto } from './dto/update-project-periods.dto';
 import { Prisma, ProjectProgress } from '@prisma/client';
 import { JSONValue } from 'postgres';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dto';
 import { CreateProjectProgressDto } from 'src/project-progress/dto/create-project-progress.dto';
-import { connect } from 'http2';
 
 @Injectable()
 export class ProjectsService {
@@ -23,6 +23,17 @@ export class ProjectsService {
         private readonly projectCreationService: ProjectCreationService,
     ) {}
 
+    async createDefenseDocument(
+        projectId: number,
+        body: createDefenseDocument,
+    ) {
+        return await this.prismaService.defenseDocument.create({
+            data: {
+                project_id: projectId,
+                ...body,
+            }})
+        }
+  
     async getProjectProgress(id: number) {
         return await this.prismaService.projectProgress.findMany({
             where: { project_id: id },
@@ -32,6 +43,23 @@ export class ProjectsService {
         });
     }
 
+async getDefenseDocument(projectId: number) {
+        return await this.prismaService.defenseDocument.findUnique({
+            where: { project_id: projectId },
+        });
+    }
+
+    async createDefenseAuthorization(body: any, projectId: number, sub: any) {
+        return await this.prismaService.defenseAuthorization.create({
+            data: {
+                ...body,
+                project_id: projectId,
+                user_id: sub,
+            },
+        });
+    }
+
+  
     async createProjectProgress(
         body: CreateProjectProgressDto,
         projectId: number,
