@@ -15,6 +15,7 @@ import { ValidationDto } from './dto/project-validation.dto';
 import { UpdateProjectPeriodsDto } from './dto/update-project-periods.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateProjectProgressDto } from 'src/project-progress/dto/create-project-progress.dto';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -69,5 +70,23 @@ export class ProjectsController {
     @Put('settings')
     async updateProjectPeriods(@Body() body: UpdateProjectPeriodsDto) {
         return await this.projectsService.updateProjectPeriods(body);
+    }
+
+    @Get(':id/progress')
+    async getProjectProgress(@Param('id') id: string) {
+        return await this.projectsService.getProjectProgress(+id);
+    }
+
+    @Post(':id/progress')
+    async createProjectProgress(
+        @Body() body: CreateProjectProgressDto,
+        @Param('id') id: string,
+        @Request() req,
+    ) {
+        return await this.projectsService.createProjectProgress(
+            body,
+            +id,
+            req.user.sub,
+        );
     }
 }

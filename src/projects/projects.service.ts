@@ -10,9 +10,11 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectCreationService } from './project-creation.service';
 import { ValidationDto } from './dto/project-validation.dto';
 import { UpdateProjectPeriodsDto } from './dto/update-project-periods.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, ProjectProgress } from '@prisma/client';
 import { JSONValue } from 'postgres';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { CreateProjectProgressDto } from 'src/project-progress/dto/create-project-progress.dto';
+import { connect } from 'http2';
 
 @Injectable()
 export class ProjectsService {
@@ -20,6 +22,29 @@ export class ProjectsService {
         private readonly prismaService: PrismaService,
         private readonly projectCreationService: ProjectCreationService,
     ) {}
+
+    async getProjectProgress(id: number) {
+        return await this.prismaService.projectProgress.findMany({
+            where: { project_id: id },
+            orderBy: {
+                created_at: 'desc',
+            },
+        });
+    }
+
+    async createProjectProgress(
+        body: CreateProjectProgressDto,
+        projectId: number,
+        sub: any,
+    ) {
+        return await this.prismaService.projectProgress.create({
+            data: {
+                ...body,
+                project_id: projectId,
+                user_id: sub,
+            },
+        });
+    }
 
     async getProjects(user: any) {
         let projects = [];
