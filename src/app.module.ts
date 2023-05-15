@@ -13,6 +13,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './tasks/tasks.module';
 import { UploadModule } from './upload/upload.module';
 import { DefenseDocModule } from './defense-doc/defense-doc.module';
+import { DefensePlanificationModule } from './defense-planification/defense-planification.module';
 
 @Module({
     imports: [
@@ -39,6 +40,7 @@ import { DefenseDocModule } from './defense-doc/defense-doc.module';
         TasksModule,
         UploadModule,
         DefenseDocModule,
+        DefensePlanificationModule,
     ],
     providers: [
         {

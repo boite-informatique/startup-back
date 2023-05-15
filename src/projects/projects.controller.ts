@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     Patch,
@@ -16,6 +17,7 @@ import { UpdateProjectPeriodsDto } from './dto/update-project-periods.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dto';
+import { CreateDefensePlanificationDto } from 'src/defense-planification/dto/create-defense-planification.dto';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -96,5 +98,23 @@ export class ProjectsController {
         @Body() body: createDefenseDocument,
     ) {
         return this.projectsService.createDefenseDocument(+id, body);
+    }
+
+    @Get(':id/defense-planification')
+    async getDefensePlanification(@Param('id') id: string) {
+        return this.projectsService.getDefensePlanification(+id);
+    }
+
+    @Post(':id/defense-planification')
+    async createDefensePlanification(
+        @Param('id') id: string,
+        @Body() body: CreateDefensePlanificationDto,
+    ) {
+        return this.projectsService.createDefensePlanification(+id, body);
+    }
+
+    @Delete(':id/defense-pllanification')
+    async deleteDefensePlanification(@Param('id') id: string) {
+        return await this.projectsService.deleteDefensePlanification(+id);
     }
 }

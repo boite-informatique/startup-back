@@ -1,7 +1,6 @@
 import {
     BadRequestException,
     ConflictException,
-    ForbiddenException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -11,9 +10,9 @@ import { ProjectCreationService } from './project-creation.service';
 import { ValidationDto } from './dto/project-validation.dto';
 import { UpdateProjectPeriodsDto } from './dto/update-project-periods.dto';
 import { Prisma } from '@prisma/client';
-import { JSONValue } from 'postgres';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dto';
+import { CreateDefensePlanificationDto } from 'src/defense-planification/dto/create-defense-planification.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -21,6 +20,65 @@ export class ProjectsService {
         private readonly prismaService: PrismaService,
         private readonly projectCreationService: ProjectCreationService,
     ) {}
+
+    async deleteDefensePlanification(projectId: number) {
+        return await this.prismaService.defensePlanification.delete({
+            where: {
+                project_id: projectId,
+            },
+        });
+    }
+    async createDefensePlanification(
+        projectId: number,
+        body: CreateDefensePlanificationDto,
+    ) {
+        try {
+            return await this.prismaService.defensePlanification.create({
+                data: {
+                    project_id: projectId,
+                    jury_members: {
+                        connect:
+                            body.jury_members.length > 0
+                                ? body.jury_members.map((memberId) => ({
+                                      id: memberId,
+                                  }))
+                                : undefined,
+                    },
+                    jury_invities: {
+                        connect:
+                            body.jury_invities.length > 0
+                                ? body.jury_invities.map((inviteId) => ({
+                                      id: inviteId,
+                                  }))
+                                : undefined,
+                    },
+                    jury_presedent: body.jury_presedent,
+                    establishement_id: body.establishement_id,
+                    date: body.date,
+                    mode: body.mode,
+                    nature: body.nature,
+                },
+                include: {
+                    jury_invities: true,
+                    jury_members: true,
+                },
+            });
+        } catch (_) {
+            throw new ConflictException(
+                'This project already have a defense planification',
+            );
+        }
+    }
+
+    async getDefensePlanification(projectId: number) {
+        return this.prismaService.defensePlanification.findUnique({
+            where: { project_id: projectId },
+            include: {
+                jury_invities: true,
+                jury_members: true,
+            },
+        });
+    }
 
     async createDefenseDocument(
         projectId: number,
