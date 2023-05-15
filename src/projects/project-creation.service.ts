@@ -72,8 +72,8 @@ export class ProjectCreationService {
         return project;
     }
 
-    createProjectQuery(ownerId: number, body: CreateProjectDto) {
-        return this.prismaService.project.create({
+    async createProjectQuery(ownerId: number, body: CreateProjectDto) {
+        return await this.prismaService.project.create({
             data: {
                 brand_name: body.brand_name,
                 product_name: body.product_name,
@@ -89,8 +89,9 @@ export class ProjectCreationService {
                 },
                 supervisors: {
                     connect:
-                        body.supervisors.length > 0 &&
-                        body.supervisors.map((email) => ({ email })),
+                        body.supervisors.length > 0
+                            ? body.supervisors.map((email) => ({ email }))
+                            : undefined,
                 },
             },
         });
