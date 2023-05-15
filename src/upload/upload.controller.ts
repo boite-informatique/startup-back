@@ -19,9 +19,11 @@ import {
 import { Express } from 'express';
 import { createReadStream } from 'fs';
 import { join } from 'path';
+import { Public } from 'src/iam/authentication/decorators/public.decorator';
 
 @Controller('upload')
 export class UploadController {
+    @Public()
     @Get(':filename')
     getFile(@Param('filename') filename: string): StreamableFile {
         const file = createReadStream(
