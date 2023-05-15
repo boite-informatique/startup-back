@@ -51,7 +51,7 @@ export class ProjectCreationService {
 
         for (const member of body.members) {
             if (!alreadyRegisteredMembers.includes(member)) {
-                await this.sendProjectInvite({
+                this.sendProjectInvite({
                     email: member,
                     projectId: project.id,
                     type: 'member',
@@ -62,7 +62,7 @@ export class ProjectCreationService {
 
         for (const supervisor of body.supervisors) {
             if (!alreadyRegisteredSupervisors.includes(supervisor)) {
-                await this.sendProjectInvite({
+                this.sendProjectInvite({
                     email: supervisor,
                     projectId: project.id,
                     type: 'supervisor',
