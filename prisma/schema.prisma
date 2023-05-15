@@ -151,7 +151,7 @@ model ProjectInvitees {
   project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
 
   type  ProjectInvitationType
-  email String                @unique
+  email String                
   token String
 }
 

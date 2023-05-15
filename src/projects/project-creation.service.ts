@@ -55,6 +55,7 @@ export class ProjectCreationService {
                     email: member,
                     projectId: project.id,
                     type: 'member',
+                    project_brand: project.brand_name,
                 });
             }
         }
@@ -65,6 +66,7 @@ export class ProjectCreationService {
                     email: supervisor,
                     projectId: project.id,
                     type: 'supervisor',
+                    project_brand: project.brand_name,
                 });
             }
         }
@@ -144,7 +146,12 @@ export class ProjectCreationService {
         return members.map((val) => val.email);
     }
 
-    async sendProjectInvite({ email, projectId, type }: projectInviteInput) {
+    async sendProjectInvite({
+        email,
+        projectId,
+        type,
+        project_brand,
+    }: projectInviteInput) {
         const invite = await this.prismaService.projectInvitees.create({
             data: {
                 email,
@@ -157,7 +164,7 @@ export class ProjectCreationService {
         await this.mailService.sendMail({
             to: invite.email,
             subject: 'You have been invited to a project',
-            text: `You are invited to join a project as a ${invite.type}, visit this link to register an account http://localhost:5173/register?invitation=true&email=${invite.email}&projectId=${invite.project_id}&type=${invite.type}&token=${invite.token}`,
+            text: `You are invited to join a project (${project_brand}) as a ${invite.type}, visit this link to register an account http://localhost:5173/register?invitation=true&email=${invite.email}&projectId=${invite.project_id}&type=${invite.type}&token=${invite.token}`,
         });
     }
 }

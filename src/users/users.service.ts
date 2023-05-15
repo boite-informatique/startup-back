@@ -79,8 +79,8 @@ export class UsersService {
         });
 
         if (invitation) {
-            await this.prismaServive.projectInvitees.delete({
-                where: { id: invitation.id },
+            await this.prismaServive.projectInvitees.deleteMany({
+                where: { email: user.email },
             });
 
             try {
