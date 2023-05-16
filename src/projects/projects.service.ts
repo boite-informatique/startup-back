@@ -257,17 +257,35 @@ export class ProjectsService {
             throw new NotFoundException('Project not found');
         }
     }
-
     async updateProject(
         userId: number,
         body: UpdateProjectDto,
         projectId: number,
     ) {
+        const project = await this.prismaService.project.findUnique({
+            where: { id: projectId },
+        });
+
         try {
             return await this.prismaService.project.updateMany({
                 where: { id: projectId, owner_id: userId },
                 data: body,
             });
+        } catch (error) {}
+        try {
+            for (const attribut in body) {
+                if (body[attribut] != project[attribut]) {
+                    this.prismaService.projectHistory.create({
+                        data: {
+                            project_id: (await project).id,
+                            user_id: userId,
+                            field: attribut,
+                            old_value: project[attribut],
+                            new_value: body[attribut],
+                        },
+                    });
+                }
+            }
         } catch (error) {}
     }
 
