@@ -17,6 +17,7 @@ import { ProjectProgressModule } from './project-progress/project-progress.modul
 import { EstablishmentsModule } from './establishments/establishments.module';
 import { DefensePlanificationModule } from './defense-planification/defense-planification.module';
 import { AnnouncementModule } from './announcement/announcement.module';
+import { ProjectDelibrationModule } from './project-delibration/project-delibration.module';
 
 @Module({
     imports: [
@@ -47,6 +48,7 @@ import { AnnouncementModule } from './announcement/announcement.module';
         EstablishmentsModule,
         DefensePlanificationModule,
         AnnouncementModule,
+        ProjectDelibrationModule,
     ],
     providers: [
         {
