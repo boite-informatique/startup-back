@@ -2,7 +2,7 @@ import { DefenseMode, DefenseNature } from '@prisma/client';
 import { IsDateString, IsIn, IsInt } from 'class-validator';
 export class CreateDefensePlanificationDto {
     @IsInt()
-    jury_presedent: number;
+    jury_president: number;
 
     @IsInt({ each: true })
     jury_members: number[];

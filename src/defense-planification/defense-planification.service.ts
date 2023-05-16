@@ -31,7 +31,7 @@ export class DefensePlanificationService {
                 id,
             },
             data: {
-                jury_presedent: body.jury_presedent,
+                jury_president: body.jury_president,
                 jury_members: {
                     set: body.jury_members?.length > 0 ? [] : undefined,
                     connect: body.jury_members?.map((m) => ({ id: m })),

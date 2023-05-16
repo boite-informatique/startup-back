@@ -75,6 +75,10 @@ export class ProjectsController {
         return await this.projectsService.updateProjectPeriods(body);
     }
 
+    @Get(':id')
+    async getProject(@Param('id') id: number) {
+        return await this.projectsService.getProject(+id);
+    }
     @Post(':id/defense-authorization')
     async createDefenseAuthorization(
         @Param('id') projectId: string,

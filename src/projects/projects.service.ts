@@ -14,9 +14,43 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dto';
 import { CreateProjectProgressDto } from 'src/project-progress/dto/create-project-progress.dto';
 import { CreateDefensePlanificationDto } from 'src/defense-planification/dto/create-defense-planification.dto';
+import { CreateDefenseAuthorizationDto } from './dto/create-defense-authorization.dto';
 
 @Injectable()
 export class ProjectsService {
+    async getProject(projectId: number) {
+        const project = await this.prismaService.project.findUnique({
+            where: {
+                id: projectId,
+            },
+            include: {
+                DefenseAuthorization: true,
+                DefenseDocument: true,
+                DefensePlanification: true,
+                history: {
+                    include: { user: true },
+                },
+                members: true,
+                owner: true,
+                ProjectInvitees: true,
+                supervisors: true,
+                ProjectProgress: {
+                    include: { user: true },
+                },
+                ProjectTask: {
+                    include: { user: true },
+                },
+                validation: {
+                    include: { validator: true },
+                },
+            },
+        });
+
+        if (!project) {
+            throw new NotFoundException('Project not found');
+        }
+        return project;
+    }
     constructor(
         private readonly prismaService: PrismaService,
         private readonly projectCreationService: ProjectCreationService,
@@ -53,7 +87,7 @@ export class ProjectsService {
                                   }))
                                 : undefined,
                     },
-                    jury_presedent: body.jury_presedent,
+                    jury_president: body.jury_president,
                     establishement_id: body.establishement_id,
                     date: body.date,
                     mode: body.mode,
@@ -108,12 +142,16 @@ export class ProjectsService {
         });
     }
 
-    async createDefenseAuthorization(body: any, projectId: number, sub: any) {
+    async createDefenseAuthorization(
+        body: CreateDefenseAuthorizationDto,
+        projectId: number,
+        sub: number,
+    ) {
         return await this.prismaService.defenseAuthorization.create({
             data: {
                 ...body,
                 project_id: projectId,
-                user_id: sub,
+                supervisor_id: sub,
             },
         });
     }
@@ -121,7 +159,7 @@ export class ProjectsService {
     async createProjectProgress(
         body: CreateProjectProgressDto,
         projectId: number,
-        sub: any,
+        sub: number,
     ) {
         return await this.prismaService.projectProgress.create({
             data: {
