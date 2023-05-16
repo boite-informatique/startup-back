@@ -50,6 +50,8 @@ model User {
   project_jury_president      DefensePlanification[]
   project_jury_members        DefensePlanification[] @relation("jury_membership")
   peoject_jury_ivities        DefensePlanification[] @relation("invitation")
+  memberEvaluation MemberEvaluation?
+
 }
 
 enum UserType {
@@ -115,6 +117,7 @@ model Project {
   DefenseDocument      DefenseDocument?
   ProjectProgress      ProjectProgress[]
   DefensePlanification              DefensePlanification?
+  ProjectReserve ProjectReserve?
 }
 
 enum ProjectType {
@@ -279,4 +282,34 @@ model TaskFinished {
   task        ProjectTask @relation(fields: [task_id], references: [id], onDelete: Cascade)
   description String
   resources   String[]
+}
+
+model Delibration {
+    id          Int         @id @default(autoincrement())
+    status DelibrationStatus
+    reservation ProjectReserve?
+    
+}
+enum DelibrationStatus {
+    accepted_with_reservation
+    accepted 
+    refused
+}
+model MemberEvaluation {
+    id          Int         @id @default(autoincrement())
+    member_id Int @unique
+    member User @relation(fields: [member_id], references: [id], onDelete: Cascade)
+    note Int 
+    appreciation String
+}
+model ProjectReserve {
+     id          Int         @id @default(autoincrement())
+     project_id Int     @unique
+     project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)  
+     delibration_id Int @unique
+     Delibration Delibration @relation(fields: [delibration_id],references: [id])
+     description String
+     documents String[]
+     reserveLifting Boolean @default(false)
+     
 }
