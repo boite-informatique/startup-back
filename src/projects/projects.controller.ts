@@ -19,6 +19,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dto';
 import { CreateProjectProgressDto } from 'src/project-progress/dto/create-project-progress.dto';
 import { CreateDefensePlanificationDto } from 'src/defense-planification/dto/create-defense-planification.dto';
+import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -52,6 +53,14 @@ export class ProjectsController {
         return this.projectsService.getProjectTasks(+id);
     }
 
+    @Post(':id/tasks')
+    async createProjectTask(
+        @Param('id') id: string,
+        @Request() req,
+        @Body() body: CreateTaskDto,
+    ) {
+        return await this.projectsService.createTask(+id, req.user.sub, body);
+    }
     @Patch(':id')
     async updateProject(
         @Request() req,

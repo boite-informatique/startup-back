@@ -15,9 +15,15 @@ import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dt
 import { CreateProjectProgressDto } from 'src/project-progress/dto/create-project-progress.dto';
 import { CreateDefensePlanificationDto } from 'src/defense-planification/dto/create-defense-planification.dto';
 import { CreateDefenseAuthorizationDto } from './dto/create-defense-authorization.dto';
+import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 
 @Injectable()
 export class ProjectsService {
+    constructor(
+        private readonly prismaService: PrismaService,
+        private readonly projectCreationService: ProjectCreationService,
+    ) {}
+
     async getProject(projectId: number) {
         const project = await this.prismaService.project.findUnique({
             where: {
@@ -51,10 +57,6 @@ export class ProjectsService {
         }
         return project;
     }
-    constructor(
-        private readonly prismaService: PrismaService,
-        private readonly projectCreationService: ProjectCreationService,
-    ) {}
 
     async deleteDefensePlanification(projectId: number) {
         return await this.prismaService.defensePlanification.delete({
@@ -294,6 +296,27 @@ export class ProjectsService {
             return tasks;
         } catch (_) {
             throw new NotFoundException('No project found');
+        }
+    }
+
+    async createTask(
+        projectId: number,
+        userId: number,
+        createTaskDto: CreateTaskDto,
+    ) {
+        try {
+            return await this.prismaService.projectTask.create({
+                data: {
+                    title: createTaskDto.title,
+                    description: createTaskDto.description,
+                    deadline: new Date(createTaskDto.deadline),
+                    resources: createTaskDto.resources,
+                    project_id: projectId,
+                    user_id: userId,
+                },
+            });
+        } catch (err) {
+            throw new NotFoundException();
         }
     }
 }

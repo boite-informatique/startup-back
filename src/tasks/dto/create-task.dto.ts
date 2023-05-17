@@ -1,9 +1,6 @@
 import { IsDateString, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class CreateTaskDto {
-    @IsInt()
-    projectId: number;
-
     @IsString()
     title: string;
 
