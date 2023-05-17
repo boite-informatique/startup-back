@@ -49,6 +49,7 @@ export class UsersService {
                 date_of_birth: new Date(createUserDto.date_of_birth),
                 type: createUserDto.type,
                 phone: createUserDto.phone,
+                avatar: createUserDto.avatar,
                 student:
                     createUserDto.type == 'student'
                         ? { create: createUserDto.info as StudentDto }
@@ -151,6 +152,7 @@ export class UsersService {
             const user = await this.prismaServive.user.update({
                 where: { id },
                 data: {
+                    ...updateUserDto,
                     email,
                     password: password
                         ? await this.hashingService.generate(password)
@@ -268,6 +270,7 @@ export class UsersService {
         };
         return await this.emailService.sendMail(mailOptions);
     }
+
     async activateReq(email: string) {
         const user = await this.prismaServive.user.findUnique({
             where: { email },
@@ -277,12 +280,18 @@ export class UsersService {
         }
         const token = await this.generateActivateToken(email);
         this.sendActivatedMail(email, token);
+        await this.cacheManager.set(
+            FORGOT_PASSWORD_CACHE_KEY + email,
+            token,
+            15 * 60 * 1000,
+        );
         return { message: 'Activate email sent successfully' };
     }
     async activateAcc(activateDto: ActivateDto) {
         const cachedToken = await this.cacheManager.get(
             FORGOT_PASSWORD_CACHE_KEY + activateDto.email,
         );
+
         if (!cachedToken) {
             throw new ForbiddenException('token expired');
         }
@@ -292,8 +301,10 @@ export class UsersService {
                     where: { email: activateDto.email },
                     data: { activated: true },
                 });
+                return { message: 'Account activated' };
+            } else {
+                throw new ForbiddenException('token expired');
             }
-            return { message: 'Account activated' };
         } catch (e) {
             throw new NotFoundException();
         }
