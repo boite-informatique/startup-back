@@ -92,6 +92,7 @@ model Establishment {
   Student Student[]
   Teacher Teacher[]
   Defense DefensePlanification[]
+  announcements Announcement[]
 }
 
 model Project {
@@ -279,4 +280,14 @@ model TaskFinished {
   task        ProjectTask @relation(fields: [task_id], references: [id], onDelete: Cascade)
   description String
   resources   String[]
+}
+
+model Announcement {
+    id                  Int       @id @default(autoincrement())
+    title               String
+    description         String
+    dateStart           DateTime
+    dateEnd             DateTime
+    establishement      Establishment[]
+    image               String
 }
