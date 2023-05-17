@@ -131,7 +131,12 @@ export class UsersService {
     async findOne(id: number) {
         const user = await this.prismaServive.user.findUnique({
             where: { id },
-            include: { student: true, teacher: true, roles: true, staff: true },
+            include: {
+                student: { include: { establishement: true } },
+                teacher: { include: { establishement: true } },
+                roles: true,
+                staff: true,
+            },
         });
         if (!user) {
             throw new UserNotFoundException();
