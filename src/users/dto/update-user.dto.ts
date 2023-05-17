@@ -9,6 +9,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsOptional()
     roles: any[];
 
+    @IsOptional()
     @IsBoolean()
     activated: boolean;
 }
