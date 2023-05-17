@@ -35,6 +35,7 @@ export class ProjectsService {
                 DefensePlanification: true,
                 history: {
                     include: { user: true },
+                    orderBy: { changed_at: 'desc' },
                 },
                 members: true,
                 owner: true,
@@ -42,12 +43,14 @@ export class ProjectsService {
                 supervisors: true,
                 ProjectProgress: {
                     include: { user: true },
+                    orderBy: { created_at: 'desc' },
                 },
                 ProjectTask: {
                     include: { user: true },
                 },
                 validation: {
                     include: { validator: true },
+                    orderBy: { created_at: 'desc' },
                 },
             },
         });
