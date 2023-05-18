@@ -277,16 +277,20 @@ export class ProjectsService {
     }
 
     async getProjectPeriods() {
-        return await this.prismaService.settings.findUnique({
-            where: { tag: 'PROJECT_PERIODS' },
-        });
+        return (
+            await this.prismaService.settings.findUnique({
+                where: { tag: 'PROJECT_PERIODS' },
+            })
+        ).value;
     }
 
     async updateProjectPeriods(body: UpdateProjectPeriodsDto) {
-        this.prismaService.settings.update({
-            data: { value: body as unknown as Prisma.JsonValue },
-            where: { tag: 'PROJECT_PERIODS' },
-        });
+        return (
+            await this.prismaService.settings.update({
+                data: { value: body as unknown as Prisma.JsonValue },
+                where: { tag: 'PROJECT_PERIODS' },
+            })
+        ).value;
     }
 
     async getProjectTasks(projectId: number) {

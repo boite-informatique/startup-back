@@ -1,18 +1,18 @@
-import { IsDate } from 'class-validator';
+import { IsDateString } from 'class-validator';
 
 export class UpdateProjectPeriodsDto {
-    @IsDate()
+    @IsDateString()
     submission: string;
 
-    @IsDate()
+    @IsDateString()
     validation: string;
 
-    @IsDate()
+    @IsDateString()
     appeal: string;
 
-    @IsDate()
+    @IsDateString()
     appealValidation: string;
 
-    @IsDate()
+    @IsDateString()
     end: string;
 }
