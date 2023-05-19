@@ -176,34 +176,39 @@ export class ProjectsService {
     }
 
     async getProjects(user: any) {
-        let projects = [];
-        if (user.type == 'student') {
-            projects = await this.prismaService.project.findMany({
-                where: { members: { some: { id: user.sub } } },
-                take: 1,
-                include: {
-                    members: true,
-                    supervisors: true,
-                    validation: true,
-                    owner: true,
+        const projects = await this.prismaService.project.findMany({
+            where: {
+                OR: {
+                    members: { some: { id: user.sub } },
+                    owner_id: user.sub,
                 },
-            });
-        } else {
-            projects = await this.prismaService.project.findMany({
-                where: {
-                    OR: {
-                        owner_id: user.sub,
-                        supervisors: { some: { id: user.sub } },
-                    },
-                },
-                include: {
-                    members: true,
-                    supervisors: true,
-                    validation: true,
-                    owner: true,
-                },
-            });
-        }
+            },
+            take: 1,
+            include: {
+                members: true,
+                supervisors: true,
+                validation: true,
+                owner: true,
+            },
+        });
+
+        if (projects.length == 0)
+            throw new NotFoundException('No projects found');
+        return projects;
+    }
+
+    async getProjectsForSupervisor(user: any) {
+        const projects = await this.prismaService.project.findMany({
+            where: {
+                supervisors: { some: { id: user.sub } },
+            },
+            include: {
+                members: true,
+                supervisors: true,
+                validation: true,
+                owner: true,
+            },
+        });
 
         if (projects.length == 0)
             throw new NotFoundException('No projects found');

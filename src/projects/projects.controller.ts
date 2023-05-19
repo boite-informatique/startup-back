@@ -27,10 +27,17 @@ export class ProjectsController {
     constructor(private readonly projectsService: ProjectsService) {}
 
     @Get()
-    async getProjects(@Request() req, @Query('sc') sc: string) {
-        if (sc == 'true') {
+    async getProjects(@Request() req, @Query('type') type: string) {
+        console.log(type);
+        if (type == 'sc') {
             return await this.projectsService.getProjectsForSC(req.user.sub);
         }
+        if (type == 'supervisor') {
+            return await this.projectsService.getProjectsForSupervisor(
+                req.user.sub,
+            );
+        }
+
         return await this.projectsService.getProjects(req.user);
     }
 
