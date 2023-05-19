@@ -175,12 +175,12 @@ export class ProjectsService {
         });
     }
 
-    async getProjects(user: any) {
+    async getProjectsForOwnersOrMembers(userId: any) {
         const projects = await this.prismaService.project.findMany({
             where: {
                 OR: {
-                    members: { some: { id: user.sub } },
-                    owner_id: user.sub,
+                    members: { some: { id: userId } },
+                    owner_id: userId,
                 },
             },
             take: 1,
@@ -197,10 +197,10 @@ export class ProjectsService {
         return projects;
     }
 
-    async getProjectsForSupervisor(user: any) {
+    async getProjectsForSupervisor(userId: number) {
         const projects = await this.prismaService.project.findMany({
             where: {
-                supervisors: { some: { id: user.sub } },
+                supervisors: { some: { id: userId } },
             },
             include: {
                 members: true,
@@ -215,10 +215,6 @@ export class ProjectsService {
         return projects;
     }
 
-    async createProject(user: any, body: CreateProjectDto) {
-        return await this.projectCreationService.createProject(user, body);
-    }
-
     // scientific committee
     async getProjectsForSC(userId: number) {
         const user = await this.prismaService.user.findUnique({
@@ -230,13 +226,13 @@ export class ProjectsService {
 
         const { establishment_id } = user.teacher;
 
-        return await this.prismaService.project.findMany({
+        const projects = await this.prismaService.project.findMany({
             where: {
                 owner: {
-                    OR: {
-                        teacher: { establishment_id },
-                        student: { establishment_id },
-                    },
+                    OR: [
+                        { teacher: { establishment_id } },
+                        { student: { establishment_id } },
+                    ],
                 },
             },
             include: {
@@ -246,6 +242,13 @@ export class ProjectsService {
                 owner: true,
             },
         });
+        if (projects.length == 0)
+            throw new NotFoundException('No projects found');
+        return projects;
+    }
+
+    async createProject(user: any, body: CreateProjectDto) {
+        return await this.projectCreationService.createProject(user, body);
     }
 
     async validateProject(

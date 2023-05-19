@@ -265,7 +265,7 @@ export class UsersService {
         const mailOptions = {
             from: 'Innovium <no-reply@innovium.dz>',
             to: email,
-            subject: 'Password reset',
+            subject: 'Activate Your Account',
             text: `Use this Link to activate ur account: http://localhost:5173/activate_account/${Token}?email=${email}`,
         };
         return await this.emailService.sendMail(mailOptions);

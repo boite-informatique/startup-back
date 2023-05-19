@@ -33,6 +33,7 @@ export class UploadController {
         return new StreamableFile(file);
     }
 
+    @Public()
     @Post('image')
     @UseInterceptors(
         FileInterceptor('file', {

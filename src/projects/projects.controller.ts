@@ -28,17 +28,18 @@ export class ProjectsController {
 
     @Get()
     async getProjects(@Request() req, @Query('type') type: string) {
-        console.log(type);
         if (type == 'sc') {
-            return await this.projectsService.getProjectsForSC(req.user.sub);
+            return await this.projectsService.getProjectsForSC(+req.user.sub);
         }
         if (type == 'supervisor') {
             return await this.projectsService.getProjectsForSupervisor(
-                req.user.sub,
+                +req.user.sub,
             );
         }
 
-        return await this.projectsService.getProjects(req.user);
+        return await this.projectsService.getProjectsForOwnersOrMembers(
+            +req.user.sub,
+        );
     }
 
     @Post()
