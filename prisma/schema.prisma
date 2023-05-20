@@ -42,7 +42,6 @@ model User {
   member_in_projects          Project[]              @relation("membership")
   supervised_projects         Project[]              @relation("supervision")
   co_supervised_projects      Project[]              @relation("co_supervision")
-  ProjectHistory              ProjectHistory[]
   ProjectValidation           ProjectValidation[]
   given_project_tasks         ProjectTask[]
   authorized_project_defenses DefenseAuthorization[]
@@ -131,8 +130,6 @@ model ProjectHistory {
 
   project_id Int
   project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
-  user_id    Int
-  user       User    @relation(fields: [user_id], references: [id])
 
   field      String
   old_value  String

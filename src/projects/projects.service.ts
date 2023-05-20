@@ -1,5 +1,6 @@
 import {
     ConflictException,
+    ForbiddenException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -33,7 +34,6 @@ export class ProjectsService {
                 DefenseDocument: true,
                 DefensePlanification: true,
                 history: {
-                    include: { user: true },
                     orderBy: { changed_at: 'desc' },
                 },
                 members: true,
@@ -275,12 +275,35 @@ export class ProjectsService {
         body: UpdateProjectDto,
         projectId: number,
     ) {
+        const project = await this.prismaService.project.findUnique({
+            where: { id: projectId },
+        });
+
         try {
-            return await this.prismaService.project.updateMany({
+            await this.prismaService.project.updateMany({
                 where: { id: projectId, owner_id: userId },
                 data: body,
             });
-        } catch (error) {}
+        } catch (error) {
+            throw new ForbiddenException(
+                'Only project owners can modify this project',
+            );
+        }
+
+        for (const property in body) {
+            if (body[property] !== project[property]) {
+                Promise.resolve(
+                    this.prismaService.projectHistory.create({
+                        data: {
+                            project_id: project.id,
+                            field: property,
+                            new_value: body[property],
+                            old_value: project[property],
+                        },
+                    }),
+                );
+            }
+        }
     }
 
     async getProjectPeriods() {
