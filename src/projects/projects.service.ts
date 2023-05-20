@@ -16,12 +16,15 @@ import { CreateProjectProgressDto } from 'src/project-progress/dto/create-projec
 import { CreateDefensePlanificationDto } from 'src/defense-planification/dto/create-defense-planification.dto';
 import { CreateDefenseAuthorizationDto } from './dto/create-defense-authorization.dto';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
+import { DefenseInviteInput } from './types/sendDefenseInviteInput.type';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class ProjectsService {
     constructor(
         private readonly prismaService: PrismaService,
         private readonly projectCreationService: ProjectCreationService,
+        private readonly mailService: MailerService,
     ) {}
 
     async getProject(projectId: number) {
@@ -68,46 +71,190 @@ export class ProjectsService {
             },
         });
     }
-    async createDefensePlanification(
+
+    async createDefensePlanifiacation(
+        project_id: number,
+        body: CreateDefensePlanificationDto,
+    ) {
+        const alreadyRegisteredPresident = await this.getNewPresident(
+            body.jury_president,
+        );
+        const alreadyRegisteredMembers = await this.getNewDefenseMembers(
+            body.jury_members,
+        );
+        const alreadyRegisteredInvitees = await this.getNewDefenseInvitees(
+            body.jury_invities,
+        );
+
+        const defensePlanification = await this.createDefensePlanificationQuery(
+            project_id,
+            {
+                ...body,
+                jury_president: alreadyRegisteredPresident,
+                jury_members: alreadyRegisteredMembers,
+                jury_invities: alreadyRegisteredInvitees,
+            },
+        );
+
+        for (const member of body.jury_members) {
+            if (!alreadyRegisteredMembers.includes(member)) {
+                this.sendDefenseInvitation({
+                    email: member,
+                    defensePlanId: defensePlanification.id,
+                    type: 'member',
+                });
+            }
+        }
+
+        for (const invite of body.jury_invities) {
+            if (!alreadyRegisteredInvitees.includes(invite)) {
+                this.sendDefenseInvitation({
+                    email: invite,
+                    defensePlanId: defensePlanification.id,
+                    type: 'invite',
+                });
+            }
+        }
+
+        if (alreadyRegisteredPresident !== body.jury_president) {
+            this.sendDefenseInvitation({
+                email: body.jury_president,
+                defensePlanId: defensePlanification.id,
+                type: 'president',
+            });
+        }
+        return defensePlanification;
+    }
+
+    async getNewPresident(presidentEmail: string) {
+        const president = await this.prismaService.user.findUnique({
+            where: {
+                email: presidentEmail,
+            },
+            select: {
+                id: true,
+                email: true,
+                type: true,
+            },
+        });
+        if (president) {
+            if (president.type != 'teacher') {
+                throw new ConflictException('the president must be a teacher');
+            }
+
+            return president.email;
+        }
+        return undefined;
+    }
+    async getNewDefenseMembers(memberEmails: string[]) {
+        const members = await this.prismaService.user.findMany({
+            where: {
+                email: { in: memberEmails },
+            },
+            select: {
+                id: true,
+                email: true,
+                type: true,
+            },
+        });
+        const nonMembers: string[] = [];
+        for (const member of members) {
+            if (member.type != 'teacher') nonMembers.push(member.email);
+        }
+
+        if (nonMembers.length > 0) {
+            throw new ConflictException('Jury members must be teachers');
+        }
+        return members.map((member) => member.email);
+    }
+
+    async getNewDefenseInvitees(inviteEmails: string[]) {
+        const invitees = await this.prismaService.user.findMany({
+            where: {
+                email: { in: inviteEmails },
+            },
+            select: {
+                id: true,
+                email: true,
+                type: true,
+            },
+        });
+        const nonInvite: string[] = [];
+        for (const invite of invitees) {
+            if (invite.type != 'teacher') nonInvite.push(invite.email);
+        }
+
+        if (nonInvite.length > 0) {
+            throw new ConflictException('Jury invitees must be teachers');
+        }
+        return invitees.map((invite) => invite.email);
+    }
+
+    async createDefensePlanificationQuery(
         projectId: number,
         body: CreateDefensePlanificationDto,
     ) {
-        try {
-            return await this.prismaService.defensePlanification.create({
-                data: {
-                    project_id: projectId,
-                    jury_members: {
-                        connect:
-                            body.jury_members.length > 0
-                                ? body.jury_members.map((memberId) => ({
-                                      id: memberId,
-                                  }))
-                                : undefined,
-                    },
-                    jury_invities: {
-                        connect:
-                            body.jury_invities.length > 0
-                                ? body.jury_invities.map((inviteId) => ({
-                                      id: inviteId,
-                                  }))
-                                : undefined,
-                    },
-                    jury_president: body.jury_president,
-                    establishement_id: body.establishement_id,
-                    date: body.date,
-                    mode: body.mode,
-                    nature: body.nature,
+        return await this.prismaService.defensePlanification.create({
+            data: {
+                project: { connect: { id: projectId } },
+                jury_members: {
+                    connect:
+                        body.jury_members.length > 0
+                            ? body.jury_members.map((email) => ({
+                                  email,
+                              }))
+                            : undefined,
                 },
-                include: {
-                    jury_invities: true,
-                    jury_members: true,
+                jury_invities: {
+                    connect:
+                        body.jury_invities.length > 0
+                            ? body.jury_invities.map((email) => ({
+                                  email,
+                              }))
+                            : undefined,
                 },
-            });
-        } catch (_) {
-            throw new ConflictException(
-                'This project already have a defense planification',
-            );
-        }
+                president: {
+                    connect: { email: body.jury_president },
+                },
+                establishement: {
+                    connect: {
+                        id: body.establishement_id,
+                    },
+                },
+                date: body.date,
+                mode: body.mode,
+                nature: body.nature,
+            },
+            include: {
+                jury_invities: true,
+                jury_members: true,
+            },
+        });
+        // } catch (_) {
+        //     throw new ConflictException(
+        //         'This project already have a defense planification',
+        //     );
+        // }
+    }
+
+    async sendDefenseInvitation({
+        email,
+        defensePlanId,
+        type,
+    }: DefenseInviteInput) {
+        const invite = await this.prismaService.defenseInvitees.create({
+            data: {
+                email,
+                type,
+                defensePlanification: { connect: { id: defensePlanId } },
+            },
+        });
+
+        await this.mailService.sendMail({
+            to: invite.email,
+            subject: 'You have been invited to a defense',
+            text: `You are invited to join a defense as a ${invite.type}, visit this link to register an account http://localhost:5173/register?invitation=true&email=${invite.email}&defensePlanId=${invite.defensePlan_id}&type=${invite.type}`,
+        });
     }
 
     async getDefensePlanification(projectId: number) {

@@ -56,6 +56,7 @@ enum UserType {
   student
   teacher
   staff
+
 }
 
 model Student {
@@ -221,8 +222,8 @@ model DefensePlanification {
   project_id Int     @unique
   project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
 
-  jury_president Int
-  president      User @relation(fields: [jury_president], references: [id])
+  jury_president_id Int
+  president      User @relation(fields: [jury_president_id], references: [id])
 
   jury_members User[] @relation("jury_membership")
 
@@ -233,6 +234,23 @@ model DefensePlanification {
   establishement    Establishment @relation(fields: [establishement_id], references: [id])
   mode              DefenseMode
   nature            DefenseNature
+  DefenseInvitees   DefenseInvitees[]
+}
+
+model DefenseInvitees {
+id         Int @id @default(autoincrement())
+
+defensePlan_id  Int
+defensePlanification DefensePlanification @relation(fields: [defensePlan_id], references: [id])
+
+type DefenseInvitationType
+email String
+}
+
+enum DefenseInvitationType {
+    member
+    president
+    invite
 }
 
 enum ProjectInvitationType {

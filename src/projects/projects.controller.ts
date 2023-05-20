@@ -150,10 +150,10 @@ export class ProjectsController {
         @Param('id') id: string,
         @Body() body: CreateDefensePlanificationDto,
     ) {
-        return this.projectsService.createDefensePlanification(+id, body);
+        return this.projectsService.createDefensePlanifiacation(+id, body);
     }
 
-    @Delete(':id/defense-pllanification')
+    @Delete(':id/defense-planification')
     async deleteDefensePlanification(@Param('id') id: string) {
         return await this.projectsService.deleteDefensePlanification(+id);
     }

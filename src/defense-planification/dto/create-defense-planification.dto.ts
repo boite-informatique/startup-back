@@ -1,14 +1,17 @@
 import { DefenseMode, DefenseNature } from '@prisma/client';
-import { IsDateString, IsIn, IsInt } from 'class-validator';
+import { IsDateString, IsEmail, IsIn, IsInt, IsString } from 'class-validator';
 export class CreateDefensePlanificationDto {
-    @IsInt()
-    jury_president: number;
+    @IsString()
+    @IsEmail()
+    jury_president: string;
 
-    @IsInt({ each: true })
-    jury_members: number[];
+    @IsString({ each: true })
+    @IsEmail({}, { each: true })
+    jury_members: string[];
 
-    @IsInt({ each: true })
-    jury_invities: number[];
+    @IsString({ each: true })
+    @IsEmail({}, { each: true })
+    jury_invities: string[];
 
     @IsInt()
     establishement_id: number;
