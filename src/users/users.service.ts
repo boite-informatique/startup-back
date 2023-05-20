@@ -100,6 +100,10 @@ export class UsersService {
                                     ? { id: user.id }
                                     : undefined,
                         },
+                        co_supervisor_id:
+                            invitation.type == 'co_supervisor'
+                                ? user.id
+                                : undefined,
                     },
                 });
             } finally {

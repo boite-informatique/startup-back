@@ -41,6 +41,7 @@ model User {
   owned_projects              Project[]              @relation("ownership")
   member_in_projects          Project[]              @relation("membership")
   supervised_projects         Project[]              @relation("supervision")
+  co_supervised_projects      Project[]              @relation("co_supervision")
   ProjectHistory              ProjectHistory[]
   ProjectValidation           ProjectValidation[]
   given_project_tasks         ProjectTask[]
@@ -107,6 +108,8 @@ model Project {
   owner_id             Int
   owner                User                  @relation(fields: [owner_id], references: [id], name: "ownership")
   supervisors          User[]                @relation(name: "supervision")
+  co_supervisor_id     Int?
+  co_supervisor        User?                 @relation(fields: [co_supervisor_id], references: [id], name: "co_supervision")
   validation           ProjectValidation[]
   members              User[]                @relation(name: "membership")
   history              ProjectHistory[]
@@ -238,6 +241,7 @@ model DefensePlanification {
 enum ProjectInvitationType {
   member
   supervisor
+  co_supervisor
 }
 
 enum ProjectValidationDecision {

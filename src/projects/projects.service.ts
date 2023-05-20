@@ -1,5 +1,4 @@
 import {
-    BadRequestException,
     ConflictException,
     Injectable,
     NotFoundException,
@@ -178,10 +177,10 @@ export class ProjectsService {
     async getProjectsForOwnersOrMembers(userId: any) {
         const projects = await this.prismaService.project.findMany({
             where: {
-                OR: {
-                    members: { some: { id: userId } },
-                    owner_id: userId,
-                },
+                OR: [
+                    { owner_id: userId },
+                    { members: { some: { id: userId } } },
+                ],
             },
             take: 1,
             include: {

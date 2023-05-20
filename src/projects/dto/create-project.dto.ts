@@ -31,6 +31,10 @@ export class CreateProjectDto {
 
     @IsEmail({}, { each: true })
     @ArrayNotEmpty()
-    @ArrayMaxSize(3)
+    @ArrayMaxSize(2)
     supervisors: string[];
+
+    @IsOptional()
+    @IsEmail()
+    co_supervisor: string;
 }
