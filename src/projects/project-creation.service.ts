@@ -76,9 +76,7 @@ export class ProjectCreationService {
             }
         }
 
-        console.log('before invitation');
         if (body.co_supervisor && alreadyRegisteredCoSupervisor.length == 0) {
-            console.log('in co_supervisor invitation');
             this.sendProjectInvite({
                 email: body.co_supervisor,
                 projectId: project.id,
@@ -111,6 +109,7 @@ export class ProjectCreationService {
                             ? body.supervisors.map((email) => ({ email }))
                             : undefined,
                 },
+                co_supervisor: { connect: { email: body.co_supervisor } },
             },
         });
     }
