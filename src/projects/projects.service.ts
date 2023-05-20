@@ -40,6 +40,7 @@ export class ProjectsService {
                 owner: true,
                 ProjectInvitees: true,
                 supervisors: true,
+                co_supervisor: true,
                 ProjectProgress: {
                     include: { user: true },
                     orderBy: { created_at: 'desc' },
@@ -188,6 +189,8 @@ export class ProjectsService {
                 supervisors: true,
                 validation: true,
                 owner: true,
+                co_supervisor: true,
+                ProjectProgress: true,
             },
         });
 
@@ -206,6 +209,8 @@ export class ProjectsService {
                 supervisors: true,
                 validation: true,
                 owner: true,
+                co_supervisor: true,
+                ProjectProgress: true,
             },
         });
 
@@ -239,6 +244,8 @@ export class ProjectsService {
                 supervisors: true,
                 validation: true,
                 owner: true,
+                co_supervisor: true,
+                ProjectProgress: true,
             },
         });
         if (projects.length == 0)
@@ -278,9 +285,9 @@ export class ProjectsService {
         const project = await this.prismaService.project.findUnique({
             where: { id: projectId },
         });
-
+        let updatedProject;
         try {
-            await this.prismaService.project.updateMany({
+            updatedProject = await this.prismaService.project.updateMany({
                 where: { id: projectId, owner_id: userId },
                 data: body,
             });
@@ -304,6 +311,7 @@ export class ProjectsService {
                 );
             }
         }
+        return updatedProject;
     }
 
     async getProjectPeriods() {
