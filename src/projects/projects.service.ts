@@ -123,6 +123,7 @@ export class ProjectsService {
                 type: 'president',
             });
         }
+
         return defensePlanification;
     }
 
@@ -194,47 +195,52 @@ export class ProjectsService {
         projectId: number,
         body: CreateDefensePlanificationDto,
     ) {
-        return await this.prismaService.defensePlanification.create({
-            data: {
-                project: { connect: { id: projectId } },
-                jury_members: {
-                    connect:
-                        body.jury_members.length > 0
-                            ? body.jury_members.map((email) => ({
-                                  email,
-                              }))
-                            : undefined,
-                },
-                jury_invities: {
-                    connect:
-                        body.jury_invities.length > 0
-                            ? body.jury_invities.map((email) => ({
-                                  email,
-                              }))
-                            : undefined,
-                },
-                president: {
-                    connect: { email: body.jury_president },
-                },
-                establishement: {
-                    connect: {
-                        id: body.establishement_id,
+        try {
+            return await this.prismaService.defensePlanification.create({
+                data: {
+                    project: { connect: { id: projectId } },
+                    jury_members: {
+                        connect:
+                            body.jury_members.length > 0
+                                ? body.jury_members.map((email) => ({
+                                      email,
+                                  }))
+                                : undefined,
                     },
+                    jury_invities: {
+                        connect:
+                            body.jury_invities.length > 0
+                                ? body.jury_invities.map((email) => ({
+                                      email,
+                                  }))
+                                : undefined,
+                    },
+                    president: {
+                        connect: body.jury_president
+                            ? { email: body.jury_president }
+                            : undefined,
+                    },
+
+                    establishement: {
+                        connect: {
+                            id: body.establishement_id,
+                        },
+                    },
+                    date: body.date,
+                    mode: body.mode,
+                    nature: body.nature,
                 },
-                date: body.date,
-                mode: body.mode,
-                nature: body.nature,
-            },
-            include: {
-                jury_invities: true,
-                jury_members: true,
-            },
-        });
-        // } catch (_) {
-        //     throw new ConflictException(
-        //         'This project already have a defense planification',
-        //     );
-        // }
+                include: {
+                    jury_invities: true,
+                    jury_members: true,
+                    president: true,
+                },
+            });
+        } catch (_) {
+            throw new ConflictException(
+                'This project already have a defense planification',
+            );
+        }
     }
 
     async sendDefenseInvitation({

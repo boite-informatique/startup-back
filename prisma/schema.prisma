@@ -222,8 +222,8 @@ model DefensePlanification {
   project_id Int     @unique
   project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
 
-  jury_president_id Int
-  president      User @relation(fields: [jury_president_id], references: [id])
+  jury_president_id Int?
+  president      User? @relation(fields: [jury_president_id], references: [id], onDelete: Cascade)
 
   jury_members User[] @relation("jury_membership")
 
@@ -241,7 +241,7 @@ model DefenseInvitees {
 id         Int @id @default(autoincrement())
 
 defensePlan_id  Int
-defensePlanification DefensePlanification @relation(fields: [defensePlan_id], references: [id])
+defensePlanification DefensePlanification @relation(fields: [defensePlan_id], references: [id], onDelete: Cascade)
 
 type DefenseInvitationType
 email String
