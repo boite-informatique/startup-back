@@ -260,6 +260,33 @@ export class ProjectsService {
             to: invite.email,
             subject: 'You have been invited to a defense',
             text: `You are invited to join a defense as a ${invite.type}, visit this link to register an account http://localhost:5173/register?invitation=true&email=${invite.email}&defensePlanId=${invite.defensePlan_id}&type=${invite.type}`,
+            html: `
+            <body>
+            <table width="100%" cellspacing="0" cellpadding="0" border="0">
+              <tr>
+                <td align="center" valign="top">
+                  <table cellspacing="0" cellpadding="0" border="0" width="600">
+                    <tr>
+                      <td align="center" bgcolor="#f9f9f9" style="padding: 40px 0;">
+                        <img src="https://i.ibb.co/0BP90Y1/innovium.png" alt="Logo" width="200" height="200" style="display: block;">
+                        <p style="font-size: 18px; margin-top: 30px;">Hello, [Mr./Miss]</p>
+                        <p style="font-size: 16px;">You are invited to join a defense as a <b>${invite.type}</b></p>
+                        <p style="font-size: 16px;">Please visit this link to register an account</b></p>
+                        <table cellspacing="0" cellpadding="0" border="0" style="margin-top: 30px;">
+                          <tr>
+                            <td align="center" style="border-radius: 3px;" bgcolor="#0F8388">
+                              <a href="http://localhost:5173/register?invitation=true&email=${invite.email}&defensePlanId=${invite.defensePlan_id}&type=${invite.type}" target="_blank" style="font-size: 16px; font-weight: bold; text-decoration: none; color: #ffffff; display: inline-block; padding: 10px 20px;">Register</a>
+                            </td>
+                          </tr>
+                        </table>
+                        <p style="font-size: 16px;">Best regards,</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>`,
         });
     }
 
