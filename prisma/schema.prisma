@@ -117,6 +117,7 @@ model Project {
   DefenseDocument      DefenseDocument?
   ProjectProgress      ProjectProgress[]
   DefensePlanification              DefensePlanification?
+  Delibration Delibration?
   ProjectReserve ProjectReserve?
 }
 
@@ -286,6 +287,8 @@ model TaskFinished {
 
 model Delibration {
     id          Int         @id @default(autoincrement())
+    project_id Int     @unique
+    project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)  
     status DelibrationStatus
     reservation ProjectReserve?
     

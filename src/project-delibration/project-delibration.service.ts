@@ -18,27 +18,64 @@ export class ProjectDelibrationService {
                 createProjectDelibrationDto.status ==
                 'accepted_with_reservation'
             ) {
-                const reserve = await this.prismaService.projectReserve.create({
-                    data: createProjectDelibrationDto.reservation,
-                });
-                return await this.prismaService.delibration.create({
-                    data: {
-                        status: createProjectDelibrationDto.status,
-                        reservation: { connect: { id: reserve.id } },
+                const delibration = await this.prismaService.delibration.create(
+                    {
+                        data: {
+                            project: {
+                                connect: {
+                                    id: createProjectDelibrationDto.projectId,
+                                },
+                            },
+                            status: createProjectDelibrationDto.status,
+                        },
                     },
+                );
+                const reserve = await this.prismaService.projectReserve.create({
+                    data: {
+                        description:
+                            createProjectDelibrationDto.reservation.description,
+                        documents:
+                            createProjectDelibrationDto.reservation.documents,
+                        Delibration: { connect: { id: delibration.id } },
+                        project: {
+                            connect: {
+                                id: createProjectDelibrationDto.projectId,
+                            },
+                        },
+                    },
+                });
+                return await this.prismaService.delibration.update({
+                    where: { id: delibration.id },
+                    data: { reservation: { connect: { id: reserve.id } } },
                 });
             } else {
                 return await this.prismaService.delibration.create({
-                    data: { status: createProjectDelibrationDto.status },
+                    data: {
+                        project: {
+                            connect: {
+                                id: createProjectDelibrationDto.projectId,
+                            },
+                        },
+                        status: createProjectDelibrationDto.status,
+                    },
                 });
             }
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+    async findAllDelibration() {
+        try {
+            return this.prismaService.delibration.findMany({
+                include: { reservation: true, project: true },
+            });
         } catch (error) {}
     }
     async findDelibration(id: number) {
         try {
             return this.prismaService.delibration.findUnique({
                 where: { id },
-                include: { reservation: true },
+                include: { reservation: true, project: true },
             });
         } catch (error) {}
     }
@@ -57,6 +94,11 @@ export class ProjectDelibrationService {
         try {
             return this.prismaService.delibration.delete({ where: { id } });
         } catch (error) {}
+    }
+    async findReserve(id: number) {
+        return this.prismaService.projectReserve.findUnique({
+            where: { project_id: id },
+        });
     }
     async createReserve(id: number, body: ProjectReserveDto) {
         try {

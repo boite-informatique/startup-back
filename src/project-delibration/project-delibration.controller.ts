@@ -28,6 +28,10 @@ export class ProjectDelibrationController {
             createProjectDelibrationDto,
         );
     }
+    @Get()
+    async findAllDelibration() {
+        return this.projectDelibrationService.findAllDelibration();
+    }
     @Get(':id')
     async findDelibration(@Param('id') id: string) {
         return this.projectDelibrationService.findDelibration(+id);
@@ -42,6 +46,10 @@ export class ProjectDelibrationController {
     @Delete(':id')
     async deleteDelibration(@Param('id') id: string) {
         return this.projectDelibrationService.deleteDelibration(+id);
+    }
+    @Get(':id/reserve')
+    async findReserve(@Param('id') id: string) {
+        return this.projectDelibrationService.findReserve(+id);
     }
     @Post(':id/reserve')
     async createReserve(
