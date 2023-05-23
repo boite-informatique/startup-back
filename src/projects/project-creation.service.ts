@@ -109,7 +109,9 @@ export class ProjectCreationService {
                             ? body.supervisors.map((email) => ({ email }))
                             : undefined,
                 },
-                co_supervisor: { connect: { email: body.co_supervisor } },
+                co_supervisor: body.co_supervisor
+                    ? { connect: { email: body.co_supervisor } }
+                    : undefined,
             },
         });
     }
