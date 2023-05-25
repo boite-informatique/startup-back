@@ -65,11 +65,11 @@ model Student {
   establishment_id Int
   establishement   Establishment @relation(fields: [establishment_id], references: [id])
 
-  filiere_id         Int
-  filere  Filiere @relation(fields: [filiere_id], references: [id])
+  filiere_id       Int
+  filiere          Filiere @relation(fields: [filiere_id], references: [id])
 
-  speciality_id        Int
-  speciality Speciality @relation(fields: [speciality_id], references: [id])
+  speciality_id    Int
+  speciality       Speciality @relation(fields: [speciality_id], references: [id])
 }
 
 model Teacher {
@@ -105,28 +105,28 @@ model Establishment {
 }
 
 model Filiere {
-  id Int @id @default(autoincrement())
-  name String
-  Student Student []  
+  id        Int @id @default(autoincrement())
+  name      String
+  Student   Student[]  
 }
 
 model Speciality {
-    id Int @id @default(autoincrement())
-    name String
-    Student Student[]
-    Teacher Teacher[]
+    id          Int @id @default(autoincrement())
+    name        String
+    Student     Student[]
+    Teacher     Teacher[]
 }
 
 model GradeTeacher {
-    id Int @id @default(autoincrement())
-    name String
-    Teacher Teacher[]
+ id         Int @id @default(autoincrement())
+ name       String
+ Teacher    Teacher[]
 }
 
 model GradeStaff {
-    id Int @id @default(autoincrement())
-    name String
-    Staff Staff[]
+  id        Int @id @default(autoincrement())
+  name      String
+  Staff     Staff[]
 }
 
 model Project {
