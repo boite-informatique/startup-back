@@ -52,7 +52,16 @@ export class UsersService {
                 avatar: createUserDto.avatar,
                 student:
                     createUserDto.type == 'student'
-                        ? { create: createUserDto.info as StudentDto }
+                        ? {
+                              create: {
+                                  ...createUserDto.info,
+                              },
+                              // create:{
+                              //establishment_id:55,
+                              //filiere_id:55,
+                              //speciality_id:66,
+                              //registration_num:"hhhhh"
+                          }
                         : undefined,
                 teacher:
                     createUserDto.type == 'teacher'

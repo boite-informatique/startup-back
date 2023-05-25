@@ -3,10 +3,10 @@ import { IsInt, IsString } from 'class-validator';
 export class StudentDto {
     @IsString()
     registration_num: string;
-    @IsString()
-    filiere: string;
-    @IsString()
-    specialty: string;
+    @IsInt()
+    filiere_id: number;
+    @IsInt()
+    specialty_id: number;
 
     @IsInt()
     establishment_id: number;
@@ -15,16 +15,16 @@ export class StudentDto {
 export class TeacherDto {
     @IsString()
     registration_num: string;
-    @IsString()
-    grade: string;
-    @IsString()
-    specialty: string;
+    @IsInt()
+    grade_id: number;
+    @IsInt()
+    specialty_id: number;
 
     @IsInt()
     establishment_id: number;
 }
 
 export class StaffDto {
-    @IsString()
-    grade: string;
+    @IsInt()
+    grade_id: number;
 }
