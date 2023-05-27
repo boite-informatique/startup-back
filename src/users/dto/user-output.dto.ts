@@ -25,14 +25,14 @@ class Teacher {
     id: number;
     registration_num: string;
     grade: string;
-    specialty: string;
+    speciality: string;
 }
 
 class Student {
     id: number;
     registration_num: string;
     filiere: string;
-    specialty: string;
+    speciality: string;
 }
 
 class Staff {

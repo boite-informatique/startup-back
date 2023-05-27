@@ -65,7 +65,7 @@ model Student {
   establishment_id Int
   establishement   Establishment @relation(fields: [establishment_id], references: [id])
   filiere          String
-  specialty        String
+  speciality        String
 }
 
 model Teacher {
@@ -75,7 +75,7 @@ model Teacher {
   establishment_id Int
   establishement   Establishment @relation(fields: [establishment_id], references: [id])
   grade            String
-  specialty        String
+  speciality        String
 }
 
 model Staff {

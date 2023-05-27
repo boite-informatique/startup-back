@@ -6,7 +6,7 @@ export class StudentDto {
     @IsString()
     filiere: string;
     @IsString()
-    specialty: string;
+    speciality: string;
 
     @IsInt()
     establishment_id: number;
@@ -18,7 +18,7 @@ export class TeacherDto {
     @IsString()
     grade: string;
     @IsString()
-    specialty: string;
+    speciality: string;
 
     @IsInt()
     establishment_id: number;
