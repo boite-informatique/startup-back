@@ -52,7 +52,39 @@ export class UsersService {
                 avatar: createUserDto.avatar,
                 student:
                     createUserDto.type == 'student'
-                        ? { create: createUserDto.info as StudentDto }
+                        ? {
+                              create: {
+                                  registration_num: (
+                                      createUserDto.info as StudentDto
+                                  ).registration_num,
+                                  establishment_id: (
+                                      createUserDto.info as StudentDto
+                                  ).establishment_id,
+                                  filiere_id: (createUserDto.info as StudentDto)
+                                      .filiere_id,
+                                  speciality_id: (
+                                      createUserDto.info as StudentDto
+                                  ).specialty_id,
+                              },
+                          }
+                        : undefined,
+                teacher:
+                    createUserDto.type == 'teacher'
+                        ? {
+                              create: {
+                                  registration_num: (
+                                      createUserDto.info as TeacherDto
+                                  ).registration_num,
+                                  establishment_id: (
+                                      createUserDto.info as TeacherDto
+                                  ).establishment_id,
+                                  grade_id: (createUserDto.info as TeacherDto)
+                                      .grade_id,
+                                  speciality_id: (
+                                      createUserDto.info as StudentDto
+                                  ).specialty_id,
+                              },
+                          }
                         : undefined,
                 staff:
                     createUserDto.type == 'staff'

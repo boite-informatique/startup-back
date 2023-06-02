@@ -65,12 +65,12 @@ export class UsersController {
     }
 
     @Get('me')
-    async getCurrentUser(@Req() req): Promise<UserOutputWithRelations> {
+    async getCurrentUser(@Req() req) {
         return await this.usersService.findOne(+req.user.sub);
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string): Promise<UserOutputWithRelations> {
+    async findOne(@Param('id') id: string) {
         return await this.usersService.findOne(+id);
     }
 
