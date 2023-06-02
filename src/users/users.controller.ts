@@ -16,7 +16,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PermissionsService } from 'src/permissions/permissions.service';
-import { UserOutput, UserOutputWithRelations } from './dto/user-output.dto';
+import { UserOutput } from './dto/user-output.dto';
 import { PermissionsOutput } from 'src/permissions/dto/permissions-output.dto';
 import { Role } from 'src/roles/dto/role-output.dto';
 import { CreateUserDto } from './dto/create-user.dto';

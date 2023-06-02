@@ -64,7 +64,7 @@ export class UsersService {
                                       .filiere_id,
                                   speciality_id: (
                                       createUserDto.info as StudentDto
-                                  ).specialty_id,
+                                  ).speciality_id,
                               },
                           }
                         : undefined,
@@ -82,7 +82,7 @@ export class UsersService {
                                       .grade_id,
                                   speciality_id: (
                                       createUserDto.info as StudentDto
-                                  ).specialty_id,
+                                  ).speciality_id,
                               },
                           }
                         : undefined,
