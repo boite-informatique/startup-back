@@ -433,6 +433,30 @@ export class ProjectsService {
         return projects;
     }
 
+    async getProjectsForResponsableStage() {
+        const projects = await this.prismaService.project.findMany({
+            where: {
+                validation: {
+                    some: { decision: 'favorable' },
+                },
+                DefenseDocument: {
+                    isNot: null,
+                },
+            },
+            include: {
+                members: true,
+                supervisors: true,
+                validation: true,
+                owner: true,
+                co_supervisor: true,
+                ProjectProgress: true,
+            },
+        });
+        if (projects.length == 0)
+            throw new NotFoundException('No projects found');
+        return projects;
+    }
+
     async createProject(user: any, body: CreateProjectDto) {
         return await this.projectCreationService.createProject(user, body);
     }

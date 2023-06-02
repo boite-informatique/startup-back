@@ -36,6 +36,9 @@ export class ProjectsController {
                 +req.user.sub,
             );
         }
+        if (type == 'rs') {
+            return await this.projectsService.getProjectsForResponsableStage();
+        }
 
         return await this.projectsService.getProjectsForOwnersOrMembers(
             +req.user.sub,
