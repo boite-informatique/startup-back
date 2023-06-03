@@ -370,10 +370,14 @@ export class ProjectsService {
             include: {
                 members: true,
                 supervisors: true,
-                validation: true,
+                validation: {
+                    orderBy: { created_at: 'desc' },
+                },
                 owner: true,
                 co_supervisor: true,
-                ProjectProgress: true,
+                ProjectProgress: {
+                    orderBy: { created_at: 'desc' },
+                },
             },
         });
 
@@ -390,10 +394,14 @@ export class ProjectsService {
             include: {
                 members: true,
                 supervisors: true,
-                validation: true,
+                validation: {
+                    orderBy: { created_at: 'desc' },
+                },
                 owner: true,
                 co_supervisor: true,
-                ProjectProgress: true,
+                ProjectProgress: {
+                    orderBy: { created_at: 'desc' },
+                },
             },
         });
 
@@ -425,10 +433,14 @@ export class ProjectsService {
             include: {
                 members: true,
                 supervisors: true,
-                validation: true,
+                validation: {
+                    orderBy: { created_at: 'desc' },
+                },
                 owner: true,
                 co_supervisor: true,
-                ProjectProgress: true,
+                ProjectProgress: {
+                    orderBy: { created_at: 'desc' },
+                },
             },
         });
         if (projects.length == 0)
@@ -449,10 +461,14 @@ export class ProjectsService {
             include: {
                 members: true,
                 supervisors: true,
-                validation: true,
+                validation: {
+                    orderBy: { created_at: 'desc' },
+                },
                 owner: true,
                 co_supervisor: true,
-                ProjectProgress: true,
+                ProjectProgress: {
+                    orderBy: { created_at: 'desc' },
+                },
             },
         });
         if (projects.length == 0)
