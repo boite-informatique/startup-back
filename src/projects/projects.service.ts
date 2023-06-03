@@ -522,7 +522,14 @@ export class ProjectsService {
 
         for (const property in body) {
             if (body[property] !== project[property]) {
-                Promise.resolve(
+                try {
+                    console.log(
+                        '[HISTORY TRY]',
+                        property,
+                        projectId,
+                        body[property],
+                        project[property],
+                    );
                     this.prismaService.projectHistory.create({
                         data: {
                             project_id: project.id,
@@ -530,8 +537,10 @@ export class ProjectsService {
                             new_value: body[property],
                             old_value: project[property],
                         },
-                    }),
-                );
+                    });
+                } catch (err) {
+                    console.log('[HISTORY ERROR]', err);
+                }
             }
         }
         return updatedProject;
