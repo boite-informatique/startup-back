@@ -94,7 +94,6 @@ model Establishment {
 
   Student Student[]
   Teacher Teacher[]
-  Defense DefensePlanification[]
   announcements Announcement[]
 }
 
@@ -234,8 +233,7 @@ model DefensePlanification {
   jury_invities User[] @relation("invitation")
 
   date              DateTime
-  establishement_id Int
-  establishement    Establishment @relation(fields: [establishement_id], references: [id])
+  location String?
   mode              DefenseMode
   nature            DefenseNature
   DefenseInvitees   DefenseInvitees[]

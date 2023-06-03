@@ -43,11 +43,7 @@ export class DefensePlanificationService {
                     set: body.jury_invities?.length > 0 ? [] : undefined,
                     connect: body.jury_invities?.map((email) => ({ email })),
                 },
-                establishement: {
-                    connect: {
-                        id: body.establishement_id,
-                    },
-                },
+                location: body.location,
                 date: body.date,
                 mode: body.mode,
                 nature: body.nature,

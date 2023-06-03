@@ -33,9 +33,15 @@ export class ProjectsService {
                 id: projectId,
             },
             include: {
-                DefenseAuthorization: true,
+                DefenseAuthorization: { include: { supervisor: true } },
                 DefenseDocument: true,
-                DefensePlanification: true,
+                DefensePlanification: {
+                    include: {
+                        president: true,
+                        jury_members: true,
+                        jury_invities: true,
+                    },
+                },
                 history: {
                     orderBy: { changed_at: 'desc' },
                 },
@@ -221,12 +227,8 @@ export class ProjectsService {
                             : undefined,
                     },
 
-                    establishement: {
-                        connect: {
-                            id: body.establishement_id,
-                        },
-                    },
-                    date: body.date,
+                    location: body.location,
+                    date: new Date(body.date),
                     mode: body.mode,
                     nature: body.nature,
                 },
@@ -236,7 +238,8 @@ export class ProjectsService {
                     president: true,
                 },
             });
-        } catch (_) {
+        } catch (err) {
+            console.log(err);
             throw new ConflictException(
                 'This project already have a defense planification',
             );

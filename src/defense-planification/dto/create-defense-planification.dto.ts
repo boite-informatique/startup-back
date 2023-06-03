@@ -1,5 +1,11 @@
 import { DefenseMode, DefenseNature } from '@prisma/client';
-import { IsDateString, IsEmail, IsIn, IsInt, IsString } from 'class-validator';
+import {
+    IsDateString,
+    IsEmail,
+    IsIn,
+    IsOptional,
+    IsString,
+} from 'class-validator';
 export class CreateDefensePlanificationDto {
     @IsEmail()
     jury_president: string;
@@ -10,8 +16,9 @@ export class CreateDefensePlanificationDto {
     @IsEmail({}, { each: true })
     jury_invities: string[];
 
-    @IsInt()
-    establishement_id: number;
+    @IsOptional()
+    @IsString()
+    location: string;
 
     @IsDateString()
     date: string;
