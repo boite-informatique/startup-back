@@ -530,7 +530,8 @@ export class ProjectsService {
                         body[property],
                         project[property],
                     );
-                    this.prismaService.projectHistory.create({
+
+                    const history = this.prismaService.projectHistory.create({
                         data: {
                             project_id: project.id,
                             field: property,
@@ -538,6 +539,7 @@ export class ProjectsService {
                             old_value: project[property],
                         },
                     });
+                    Promise.resolve(history);
                 } catch (err) {
                     console.log('[HISTORY ERROR]', err);
                 }
