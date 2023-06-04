@@ -40,6 +40,7 @@ export class ProjectsService {
                         president: true,
                         jury_members: true,
                         jury_invities: true,
+                        DefenseInvitees: true,
                     },
                 },
                 history: {
