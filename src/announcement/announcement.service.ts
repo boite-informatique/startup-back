@@ -40,7 +40,11 @@ export class AnnouncementService {
     async create(createAnnouncementDto: CreateAnnouncementDto) {
         return await this.prismaService.announcement.create({
             data: {
-                ...createAnnouncementDto,
+                title: createAnnouncementDto.title,
+                description: createAnnouncementDto.description,
+                dateStart: new Date(createAnnouncementDto.dateStart),
+                dateEnd: new Date(createAnnouncementDto.dateEnd),
+                image: createAnnouncementDto.image,
                 establishement: {
                     connect:
                         createAnnouncementDto.establishement.length > 0

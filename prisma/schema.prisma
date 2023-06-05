@@ -307,8 +307,8 @@ model Announcement {
     id                  Int       @id @default(autoincrement())
     title               String
     description         String
-    dateStart           DateTime
-    dateEnd             DateTime
+    dateStart           DateTime @db.Date
+    dateEnd             DateTime @db.Date
     establishement      Establishment[]
     image               String
 }
