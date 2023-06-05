@@ -56,7 +56,7 @@ export class ProjectsService {
                     orderBy: { created_at: 'desc' },
                 },
                 ProjectTask: {
-                    include: { user: true },
+                    include: { user: true, TaskFinished: true },
                 },
                 validation: {
                     include: { validator: true },
