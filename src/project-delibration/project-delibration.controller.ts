@@ -62,12 +62,7 @@ export class ProjectDelibrationController {
     async deleteReserve(@Param('id') id: string) {
         return this.projectDelibrationService.deleteReserve(+id);
     }
-    @Post('member-evaluation')
-    async createEvaluation(@Body() memberEvaluation: MemberEvaluationDto) {
-        return this.projectDelibrationService.createEvaluation(
-            memberEvaluation,
-        );
-    }
+
     @Get('member-evaluation/:id')
     async FindEvaluation(@Param('id') id: string) {
         return this.projectDelibrationService.FindEvaluation(+id);

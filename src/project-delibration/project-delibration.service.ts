@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateProjectDelibrationDto } from './dto/create-project-delibration.dto';
 import { UpdateProjectDelibrationDto } from './dto/update-project-delibration.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { connect } from 'http2';
-import { MemberEvaluationDto } from './dto/member-evaluation.dto';
 import { ProjectReserveDto } from './dto/project-reserve.dto';
 import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
 
@@ -118,23 +116,17 @@ export class ProjectDelibrationService {
             });
         } catch (error) {}
     }
-    async createEvaluation(memberEvaluation: MemberEvaluationDto) {
-        try {
-            return await this.prismaService.memberEvaluation.create({
-                data: memberEvaluation,
-            });
-        } catch (error) {}
-    }
+
     async FindEvaluation(id: number) {
         try {
-            return await this.prismaService.memberEvaluation.findUnique({
+            return await this.prismaService.evaluation.findUnique({
                 where: { id },
             });
         } catch (error) {}
     }
     async updateEvaluation(id: number, body: UpdateEvaluationDto) {
         try {
-            return await this.prismaService.memberEvaluation.update({
+            return await this.prismaService.evaluation.update({
                 where: { id },
                 data: body,
             });
@@ -142,7 +134,7 @@ export class ProjectDelibrationService {
     }
     async deleteEvaluation(id: number) {
         try {
-            return this.prismaService.memberEvaluation.delete({
+            return this.prismaService.evaluation.delete({
                 where: { id },
             });
         } catch (error) {}
