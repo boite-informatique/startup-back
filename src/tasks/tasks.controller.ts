@@ -61,4 +61,13 @@ export class TasksController {
     deleteTaskFinished(@Param('id') id: string) {
         return this.tasksFinishedService.delete(+id);
     }
+
+    @Post(':id/comments')
+    async createComment(
+        @Param('id') id: string,
+        @Body() body: any,
+        @Req() req: any,
+    ) {
+        return this.tasksService.createComment(+id, body, +req.user.sub);
+    }
 }
