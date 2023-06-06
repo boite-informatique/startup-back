@@ -303,6 +303,16 @@ model TaskFinished {
   resources   String[]
 }
 
+model Announcement {
+    id                  Int       @id @default(autoincrement())
+    title               String
+    description         String
+    dateStart           DateTime @db.Date
+    dateEnd             DateTime @db.Date
+    establishement      Establishment[]
+    image               String
+}
+
 model Delibration {
     id          Int         @id @default(autoincrement())
     project_id Int     @unique
