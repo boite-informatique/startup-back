@@ -16,6 +16,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Comment } from '@prisma/client';
 import { CreateTaskFinishedDto } from './dto/create-task-finished.dto';
 import { UpdateTaskFinishedDto } from './dto/update-task-finished.dto';
+import { CreateCommentDto } from 'src/projects/dto/create-comment.dto.';
 
 @ApiTags('project tasks')
 @Controller('tasks')
@@ -65,7 +66,7 @@ export class TasksController {
     @Post(':id/comments')
     async createComment(
         @Param('id') id: string,
-        @Body() body: any,
+        @Body() body: CreateCommentDto,
         @Req() req: any,
     ) {
         return this.tasksService.createComment(+id, body, +req.user.sub);
