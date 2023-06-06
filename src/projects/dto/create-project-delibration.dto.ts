@@ -1,7 +1,5 @@
-import { DelibrationStatus, ProjectReserve } from '@prisma/client';
-import { IsInt, IsObject, IsString } from 'class-validator';
-import e from 'express';
-import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dto';
+import { DelibrationStatus } from '@prisma/client';
+import { IsObject, IsString } from 'class-validator';
 import { MemberEvaluationDto } from './member-evaluation.dto';
 
 export class CreateProjectDelibrationDto {

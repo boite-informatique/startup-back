@@ -22,6 +22,7 @@ import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 import { DefenseInviteInput } from './types/sendDefenseInviteInput.type';
 import { MailerService } from '@nestjs-modules/mailer';
+import Handlebars from 'handlebars';
 
 @Injectable()
 export class ProjectsService {
@@ -592,6 +593,158 @@ export class ProjectsService {
         projectId: number,
         body: CreateProjectDelibrationDto,
     ) {
+        const source = `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Project Defense Report</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                }
+                h1 {
+                    text-align: center;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 20px;
+                }
+                th, td {
+                    border: 1px solid #000;
+                    padding: 8px;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Project Defense Report</h1>
+            <h3>{{dateDefense}}</h3>
+        
+            <h2>Project Details</h2>
+            <table>
+              
+                <tr>
+                    <th>Project Name</th>
+                    <td>{{projectName}}</td>
+                </tr>
+                <tr>
+                    <th>Project Type</th>
+                    <td>{{projectType}}</td>
+                </tr>
+            </table>
+        
+            <h2>Project Members</h2>
+            <table>
+                <tr>
+                    <th>Project Owner</th>
+                    <td>{{projectOwner}}</td>
+                </tr>
+                <tr>
+                  <th>Project Members</th>
+                    <td>
+                       <ul class="memberProject">
+                          {{#each memberProject}}
+                              <li>{{first_name}} {{last_name}}</li>
+                          {{/each}}
+                      </ul>
+                  </td>
+                </tr>
+            </table>
+        
+            <h2>Project Supervisors</h2>
+            <table>
+                <tr>
+                    <th>Project Supervisor</th>
+                    <td>
+                    <ul class="supervisors">
+                   {{#each supervisors}}
+                    <li>{{this.first_name}}+{{this.last_name}}</li>
+                   {{/each}}
+               </ul>
+               </td>                        
+               </tr>
+                <tr>createProjectDelibrationDto.
+                    <th>Co-Supervisor</th>
+                    <td>
+                    <ul class="coSupervisors">
+                   {{#each coSupervisors}}
+                    <li>{{this.first_name}}+{{this.last_name}}</li>
+                   {{/each}}
+               </ul>
+               </td>   
+                </tr>
+            </table>
+        
+            <h2>Defense Jury</h2>
+            <table>
+                <tr>
+                    <th>Jury President</th>
+                    <td>{{juryPresident}}</td>
+                </tr>
+                <tr>
+                    <th>Jury Members</th>
+                    <td>
+                    <ul class="memberJury_list">
+                   {{#each memberJury}}
+                    <li>{{this.first_name}}+{{this.last_name}}</li>
+                   {{/each}}
+               </ul>
+               </td>                       
+                </tr>
+                <tr>
+                    <th>Guests</th>
+                    <td>
+                    <ul class="guestsJury_list">
+                   {{#each guestsJury}}
+                    <li>{{this.first_name}}+{{this.last_name}}</li>
+                   {{/each}}
+               </ul>
+               </td>                         
+                </tr>
+            </table>
+        
+            <h2>Evaluation Results</h2>
+            <table>
+                <tr>
+                    <th>Member</th>
+                    <th>Grade</th>
+                    <th>Appreciation</th>
+                </tr>
+                {{#each evaluations}}
+                <tr>
+                <td>{{this.member.first_name}}+{{this.last_name}}</td>
+                <td>{{this.note}}</td>
+                <td>{{this.appreciation}}</td>
+            </tr>
+                {{/each}}
+            </table>
+        </body>
+        </html>
+        `;
+        const project = await this.prismaService.project.findUnique({
+            where: { id: projectId },
+            include: {
+                owner: true,
+                members: true,
+                supervisors: true,
+                Delibration: true,
+            },
+        });
+        const defense =
+            await this.prismaService.defensePlanification.findUnique({
+                where: {
+                    project_id: projectId,
+                },
+                include: {
+                    president: true,
+                    jury_invities: true,
+                    jury_members: true,
+                },
+            });
+
         try {
             const delibration = await this.prismaService.delibration.create({
                 data: {
@@ -605,6 +758,24 @@ export class ProjectsService {
                 },
             });
 
+            const template = Handlebars.compile(source);
+            const data = {
+                dateDefense: `${defense.date}`,
+                projectName: `${project.product_name}`,
+                projectType: `${project.type}`,
+                projectOwner: `${project.owner.first_name} + ' ' + ${project.owner.last_name}`,
+                memberProject: `${project.members}`,
+                supervisors: `${project.supervisors}`,
+                coSupervisors: `${project.co_supervisor_id}`,
+                juryPresident: `${defense.president.first_name} + ' ' + ${defense.president.last_name}`,
+                memberJury: `${defense.jury_members}`,
+                guestsJury: `${defense.jury_invities}`,
+                evaluation: `${body.evaluations}`,
+            };
+            const result = template(data);
+            console.log(project.members);
+            console.log(project.supervisors);
+            console.log(result);
             return delibration;
         } catch (error) {
             throw new Error(error);
