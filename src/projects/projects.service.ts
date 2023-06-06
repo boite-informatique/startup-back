@@ -593,60 +593,19 @@ export class ProjectsService {
         body: CreateProjectDelibrationDto,
     ) {
         try {
-            if (body.status == 'accepted_with_reservation') {
-                const delibration = await this.prismaService.delibration.create(
-                    {
-                        data: {
-                            project: {
-                                connect: {
-                                    id: projectId,
-                                },
-                            },
-                            status: body.status,
+            const delibration = await this.prismaService.delibration.create({
+                data: {
+                    project_id: projectId,
+                    status: body.status,
+                    evaluations: {
+                        createMany: {
+                            data: body.evaluations,
                         },
                     },
-                );
-                const reserve = await this.prismaService.projectReserve.create({
-                    data: {
-                        description: body.reservation.description,
-                        documents: body.reservation.documents,
-                        Delibration: { connect: { id: delibration.id } },
-                        project: {
-                            connect: {
-                                id: projectId,
-                            },
-                        },
-                    },
-                });
-                return await this.prismaService.delibration.update({
-                    where: { id: delibration.id },
-                    data: { reservation: { connect: { id: reserve.id } } },
-                });
-            } else {
-                const delibration = await this.prismaService.delibration.create(
-                    {
-                        data: {
-                            project: {
-                                connect: {
-                                    id: projectId,
-                                },
-                            },
-                            status: body.status,
-                        },
-                    },
-                );
-                const evaluationsBody = body.evaluations.map((e) => {
-                    return {
-                        ...e,
-                        delibration_id: delibration.id,
-                    };
-                });
-                const evaluations =
-                    await this.prismaService.evaluation.createMany({
-                        data: evaluationsBody,
-                    });
-                return delibration;
-            }
+                },
+            });
+
+            return delibration;
         } catch (error) {
             throw new Error(error);
         }

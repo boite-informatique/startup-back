@@ -7,8 +7,6 @@ import { MemberEvaluationDto } from './member-evaluation.dto';
 export class CreateProjectDelibrationDto {
     @IsString()
     status: DelibrationStatus;
-    @IsObject()
-    reservation: ProjectReserve;
 
     @IsObject({ each: true })
     evaluations: MemberEvaluationDto[];

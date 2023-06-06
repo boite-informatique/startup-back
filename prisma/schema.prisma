@@ -333,8 +333,8 @@ model Evaluation {
     member_id Int @unique
     member User @relation(fields: [member_id], references: [id], onDelete: Cascade)
     delibration_id Int 
-    Delibration Delibration @relation(fields: [delibration_id],references: [id])
-    note Int 
+    Delibration Delibration @relation(fields: [delibration_id],references: [id], onDelete: Cascade)
+    note Float 
     appreciation String
 }
 model ProjectReserve {
