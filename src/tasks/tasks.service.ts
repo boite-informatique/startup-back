@@ -7,25 +7,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class TasksService {
     constructor(private readonly prismaService: PrismaService) {}
 
-    async create(createTaskDto: CreateTaskDto, userId: number) {
-        try {
-            return await this.prismaService.projectTask.create({
-                data: {
-                    title: createTaskDto.title,
-                    description: createTaskDto.description,
-                    deadline: createTaskDto.deadline,
-                    resources: createTaskDto.resources,
-                    project: { connect: { id: createTaskDto.projectId } },
-                    user: { connect: { id: userId } },
-                },
-            });
-        } catch (_) {}
-    }
-
     async findOne(id: number) {
         const task = await this.prismaService.projectTask.findUnique({
             where: { id },
-            include: { TaskFinished: true },
+            include: {
+                TaskFinished: true,
+                comments: { include: { author: true } },
+                user: true,
+            },
         });
 
         if (task) return task;

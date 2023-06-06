@@ -23,6 +23,7 @@ import { UpdateProjectDelibrationDto } from './dto/update-project-delibration.dt
 import { ProjectReserveDto } from './dto/project-reserve.dto';
 import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
 import { CreateProjectDelibrationDto } from './dto/create-project-delibration.dto';
+import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -30,11 +31,22 @@ export class ProjectsController {
     constructor(private readonly projectsService: ProjectsService) {}
 
     @Get()
-    async getProjects(@Request() req, @Query('sc') sc: string) {
-        if (sc == 'true') {
-            return await this.projectsService.getProjectsForSC(req.user.sub);
+    async getProjects(@Request() req, @Query('type') type: string) {
+        if (type == 'sc') {
+            return await this.projectsService.getProjectsForSC(+req.user.sub);
         }
-        return await this.projectsService.getProjects(req.user);
+        if (type == 'supervisor') {
+            return await this.projectsService.getProjectsForSupervisor(
+                +req.user.sub,
+            );
+        }
+        if (type == 'rs') {
+            return await this.projectsService.getProjectsForResponsableStage();
+        }
+
+        return await this.projectsService.getProjectsForOwnersOrMembers(
+            +req.user.sub,
+        );
     }
 
     @Post()
@@ -56,6 +68,14 @@ export class ProjectsController {
         return this.projectsService.getProjectTasks(+id);
     }
 
+    @Post(':id/tasks')
+    async createProjectTask(
+        @Param('id') id: string,
+        @Request() req,
+        @Body() body: CreateTaskDto,
+    ) {
+        return await this.projectsService.createTask(+id, req.user.sub, body);
+    }
     @Patch(':id')
     async updateProject(
         @Request() req,
@@ -137,10 +157,10 @@ export class ProjectsController {
         @Param('id') id: string,
         @Body() body: CreateDefensePlanificationDto,
     ) {
-        return this.projectsService.createDefensePlanification(+id, body);
+        return this.projectsService.createDefensePlanifiacation(+id, body);
     }
 
-    @Delete(':id/defense-pllanification')
+    @Delete(':id/defense-planification')
     async deleteDefensePlanification(@Param('id') id: string) {
         return await this.projectsService.deleteDefensePlanification(+id);
     }

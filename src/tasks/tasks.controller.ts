@@ -25,11 +25,6 @@ export class TasksController {
         private readonly tasksFinishedService: TasksFinishedService,
     ) {}
 
-    @Post()
-    create(@Body() createTaskDto: CreateTaskDto, @Req() user: any) {
-        return this.tasksService.create(createTaskDto, user.sub);
-    }
-
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.tasksService.findOne(+id);

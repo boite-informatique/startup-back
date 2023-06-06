@@ -33,6 +33,7 @@ export class UploadController {
         return new StreamableFile(file);
     }
 
+    @Public()
     @Post('image')
     @UseInterceptors(
         FileInterceptor('file', {
@@ -103,7 +104,6 @@ export class UploadController {
                 { name: 'memoire', maxCount: 1 },
                 { name: 'bmc', maxCount: 1 },
                 { name: 'label', maxCount: 1 },
-                { name: 'brevet', maxCount: 1 },
             ],
             {
                 fileFilter: (req, file, cb) => {
@@ -125,11 +125,14 @@ export class UploadController {
         @UploadedFiles()
         files: {
             memoire: Express.Multer.File[];
-            bmc?: Express.Multer.File[];
-            label?: Express.Multer.File[];
-            brevet?: Express.Multer.File[];
+            bmc: Express.Multer.File[];
+            label: Express.Multer.File[];
         },
     ) {
-        return files.memoire[0].filename + ' ' + files.bmc[0].filename;
+        return {
+            memoire: files.memoire[0].filename,
+            bmc: files.bmc[0].filename,
+            label: files.label[0].filename,
+        };
     }
 }

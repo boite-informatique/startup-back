@@ -20,12 +20,16 @@ export class ProjectCreationService {
         const alreadyRegisteredMembers = await this.getNewProjectMembers(
             body.members,
         );
-        alreadyRegisteredMembers.push(user.email);
         const alreadyRegisteredSupervisors =
             await this.getNewProjectSupervisors(body.supervisors);
 
+        const alreadyRegisteredCoSupervisor = body.co_supervisor
+            ? await this.getNewProjectSupervisors([body.co_supervisor])
+            : [];
+
         if (user.type == 'student') {
-            if (body.members.length > 5)
+            alreadyRegisteredMembers.push(user.email);
+            if (body.members.length > 6)
                 throw new BadRequestException(
                     'Project members cannot be more than 6',
                 );
@@ -47,6 +51,7 @@ export class ProjectCreationService {
             ...body,
             members: alreadyRegisteredMembers,
             supervisors: alreadyRegisteredSupervisors,
+            co_supervisor: alreadyRegisteredCoSupervisor[0],
         });
 
         for (const member of body.members) {
@@ -69,6 +74,15 @@ export class ProjectCreationService {
                     project_brand: project.brand_name,
                 });
             }
+        }
+
+        if (body.co_supervisor && alreadyRegisteredCoSupervisor.length == 0) {
+            this.sendProjectInvite({
+                email: body.co_supervisor,
+                projectId: project.id,
+                type: 'co_supervisor',
+                project_brand: project.brand_name,
+            });
         }
 
         return project;
@@ -95,6 +109,9 @@ export class ProjectCreationService {
                             ? body.supervisors.map((email) => ({ email }))
                             : undefined,
                 },
+                co_supervisor: body.co_supervisor
+                    ? { connect: { email: body.co_supervisor } }
+                    : undefined,
             },
         });
     }

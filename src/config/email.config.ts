@@ -5,7 +5,7 @@ export default registerAs('email', () => ({
     port: process.env.SMTP_PORT || 587,
     secure: process.env.SMTP_SECURE || false,
     auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: process.env.SMTP_USER || 'dalton.luettgen@ethereal.email',
+        pass: process.env.SMTP_PASS || 'Ny5RMWjsf4PaS8Dw2h',
     },
 }));
