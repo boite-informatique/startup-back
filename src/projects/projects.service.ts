@@ -66,6 +66,12 @@ export class ProjectsService {
                     include: { validator: true },
                     orderBy: { created_at: 'desc' },
                 },
+                Delibration: {
+                    include: {
+                        evaluations: { include: { member: true } },
+                        reservation: true,
+                    },
+                },
             },
         });
 
