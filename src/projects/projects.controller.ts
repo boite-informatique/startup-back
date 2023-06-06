@@ -19,6 +19,10 @@ import { ApiTags } from '@nestjs/swagger';
 import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dto';
 import { CreateProjectProgressDto } from 'src/project-progress/dto/create-project-progress.dto';
 import { CreateDefensePlanificationDto } from 'src/defense-planification/dto/create-defense-planification.dto';
+import { UpdateProjectDelibrationDto } from './dto/update-project-delibration.dto';
+import { ProjectReserveDto } from './dto/project-reserve.dto';
+import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
+import { CreateProjectDelibrationDto } from './dto/create-project-delibration.dto';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 
 @ApiTags('projects')
@@ -159,5 +163,64 @@ export class ProjectsController {
     @Delete(':id/defense-planification')
     async deleteDefensePlanification(@Param('id') id: string) {
         return await this.projectsService.deleteDefensePlanification(+id);
+    }
+    /////////////////////  Delibration ///////////////////////
+    @Post(':id/delibration')
+    async createDelibration(
+        @Param('id') id: string,
+        @Body() body: CreateProjectDelibrationDto,
+    ) {
+        return this.projectsService.createDelibration(+id, body);
+    }
+    @Get('/delibrations')
+    async findAllDelibration() {
+        return this.projectsService.findAllDelibration();
+    }
+    @Get(':id/delibration')
+    async findDelibration(@Param('id') id: string) {
+        return this.projectsService.findDelibration(+id);
+    }
+    @Patch(':id/delibration')
+    async updateDelibration(
+        @Param('id') id: string,
+        @Body() body: UpdateProjectDelibrationDto,
+    ) {
+        return this.projectsService.updateDelibration(+id, body);
+    }
+    @Delete(':id/delibration')
+    async deleteDelibration(@Param('id') id: string) {
+        return this.projectsService.deleteDelibration(+id);
+    }
+    @Get(':id/delibration/reserve')
+    async findReserve(@Param('id') id: string) {
+        return this.projectsService.findReserve(+id);
+    }
+    @Post(':id/delibration/reserve')
+    async createReserve(
+        @Param('id') id: string,
+        @Body() body: ProjectReserveDto,
+    ) {
+        return this.projectsService.createReserve(+id, body);
+    }
+    @Delete(':id/delibration/reserve')
+    async deleteReserve(@Param('id') id: string) {
+        return this.projectsService.deleteReserve(+id);
+    }
+    /////////////////////  Delibration ///////////////////////
+
+    @Get('member-evaluation/:id')
+    async FindEvaluation(@Param('id') id: string) {
+        return this.projectsService.FindEvaluation(+id);
+    }
+    @Patch('member-evaluation/:id')
+    async updateEvaluation(
+        @Param('id') id: string,
+        @Body() body: UpdateEvaluationDto,
+    ) {
+        return this.projectsService.updateEvaluation(+id, body);
+    }
+    @Delete('member-evaluation/:id')
+    async deleteEvaluation(@Param('id') id: string) {
+        return this.projectsService.deleteEvaluation(+id);
     }
 }

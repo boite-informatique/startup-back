@@ -15,6 +15,10 @@ import { createDefenseDocument } from 'src/defense-doc/dto/create-defense-doc.dt
 import { CreateProjectProgressDto } from 'src/project-progress/dto/create-project-progress.dto';
 import { CreateDefensePlanificationDto } from 'src/defense-planification/dto/create-defense-planification.dto';
 import { CreateDefenseAuthorizationDto } from './dto/create-defense-authorization.dto';
+import { CreateProjectDelibrationDto } from './dto/create-project-delibration.dto';
+import { UpdateProjectDelibrationDto } from './dto/update-project-delibration.dto';
+import { ProjectReserveDto } from './dto/project-reserve.dto';
+import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 import { DefenseInviteInput } from './types/sendDefenseInviteInput.type';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -578,7 +582,146 @@ export class ProjectsService {
             throw new NotFoundException('No project found');
         }
     }
+    async createDelibration(
+        projectId: number,
+        body: CreateProjectDelibrationDto,
+    ) {
+        try {
+            if (body.status == 'accepted_with_reservation') {
+                const delibration = await this.prismaService.delibration.create(
+                    {
+                        data: {
+                            project: {
+                                connect: {
+                                    id: projectId,
+                                },
+                            },
+                            status: body.status,
+                        },
+                    },
+                );
+                const reserve = await this.prismaService.projectReserve.create({
+                    data: {
+                        description: body.reservation.description,
+                        documents: body.reservation.documents,
+                        Delibration: { connect: { id: delibration.id } },
+                        project: {
+                            connect: {
+                                id: projectId,
+                            },
+                        },
+                    },
+                });
+                return await this.prismaService.delibration.update({
+                    where: { id: delibration.id },
+                    data: { reservation: { connect: { id: reserve.id } } },
+                });
+            } else {
+                const delibration = await this.prismaService.delibration.create(
+                    {
+                        data: {
+                            project: {
+                                connect: {
+                                    id: projectId,
+                                },
+                            },
+                            status: body.status,
+                        },
+                    },
+                );
+                const evaluationsBody = body.evaluations.map((e) => {
+                    return {
+                        ...e,
+                        delibration_id: delibration.id,
+                    };
+                });
+                const evaluations =
+                    await this.prismaService.evaluation.createMany({
+                        data: evaluationsBody,
+                    });
+                return delibration;
+            }
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+    async findAllDelibration() {
+        try {
+            return this.prismaService.delibration.findMany({
+                include: { reservation: true, project: true },
+            });
+        } catch (error) {}
+    }
+    async findDelibration(id: number) {
+        try {
+            return this.prismaService.delibration.findUnique({
+                where: { id },
+                include: { reservation: true, project: true },
+            });
+        } catch (error) {}
+    }
+    async updateDelibration(
+        id: number,
+        updateDelibrationDto: UpdateProjectDelibrationDto,
+    ) {
+        try {
+            return this.prismaService.delibration.update({
+                where: { id },
+                data: { status: updateDelibrationDto.status },
+            });
+        } catch (error) {}
+    }
+    async deleteDelibration(id: number) {
+        try {
+            return this.prismaService.delibration.delete({ where: { id } });
+        } catch (error) {}
+    }
+    async findReserve(id: number) {
+        return this.prismaService.projectReserve.findUnique({
+            where: { project_id: id },
+        });
+    }
+    async createReserve(id: number, body: ProjectReserveDto) {
+        try {
+            return this.prismaService.projectReserve.create({
+                data: {
+                    description: body.description,
+                    Delibration: { connect: { id: body.delibration_id } },
+                    project: { connect: { id } },
+                },
+            });
+        } catch (error) {}
+    }
+    async deleteReserve(id: number) {
+        try {
+            return this.prismaService.projectReserve.delete({
+                where: { id },
+            });
+        } catch (error) {}
+    }
 
+    async FindEvaluation(id: number) {
+        try {
+            return await this.prismaService.evaluation.findUnique({
+                where: { id },
+            });
+        } catch (error) {}
+    }
+    async updateEvaluation(id: number, body: UpdateEvaluationDto) {
+        try {
+            return await this.prismaService.evaluation.update({
+                where: { id },
+                data: body,
+            });
+        } catch (error) {}
+    }
+    async deleteEvaluation(id: number) {
+        try {
+            return this.prismaService.evaluation.delete({
+                where: { id },
+            });
+        } catch (error) {}
+    }
     async createTask(
         projectId: number,
         userId: number,
