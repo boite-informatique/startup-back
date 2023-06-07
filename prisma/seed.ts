@@ -11,11 +11,10 @@ async function main() {
         create: {
             tag: 'PROJECT_PERIODS',
             value: {
-                submission: '2023-05-07',
-                validation: '2023-05-14',
-                appeal: '2023-05-21',
-                appealValidation: '2023-05-28',
-                end: '2023-05-31',
+                submission: { start: '2023-05-01', end: '2023-05-07' },
+                validation: { start: '2023-05-08', end: '2023-05-14' },
+                appeal: { start: '2023-05-15', end: '2023-05-21' },
+                appealValidation: { start: '2023-05-22', end: '2023-05-28' },
             },
         },
     });
