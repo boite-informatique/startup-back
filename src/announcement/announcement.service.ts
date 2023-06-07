@@ -65,21 +65,18 @@ export class AnnouncementService {
         });
     }
 
-    async update(id: number, updateAnnouncementDto: UpdateAnnouncementDto) {
+    async update(id: number, body: UpdateAnnouncementDto) {
         return await this.prismaService.announcement.update({
             where: { id },
             data: {
-                ...updateAnnouncementDto,
+                ...body,
+                dateStart: new Date(body.dateStart) || undefined,
+                dateEnd: new Date(body.dateEnd) || undefined,
                 establishement: {
-                    set:
-                        updateAnnouncementDto.establishement?.length > 0
-                            ? []
-                            : undefined,
-                    connect: updateAnnouncementDto.establishement?.map(
-                        (establishementId) => ({
-                            id: establishementId,
-                        }),
-                    ),
+                    set: body.establishement?.length > 0 ? [] : undefined,
+                    connect: body.establishement?.map((establishementId) => ({
+                        id: establishementId,
+                    })),
                 },
             },
         });
