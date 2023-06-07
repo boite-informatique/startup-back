@@ -24,6 +24,7 @@ import { ProjectReserveDto } from './dto/project-reserve.dto';
 import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
 import { CreateProjectDelibrationDto } from './dto/create-project-delibration.dto';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
+import { Public } from 'src/iam/authentication/decorators/public.decorator';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -223,7 +224,7 @@ export class ProjectsController {
     async deleteEvaluation(@Param('id') id: string) {
         return this.projectsService.deleteEvaluation(+id);
     }
-
+    @Public()
     @Get(':id/delibration/defense-report')
     async getDefenseReport(@Param('id') id: string) {
         return this.projectsService.getDefenseReport(+id);
