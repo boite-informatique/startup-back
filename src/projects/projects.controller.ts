@@ -24,6 +24,7 @@ import { ProjectReserveDto } from './dto/project-reserve.dto';
 import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
 import { CreateProjectDelibrationDto } from './dto/create-project-delibration.dto';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
+import { Public } from 'src/iam/authentication/decorators/public.decorator';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -222,5 +223,19 @@ export class ProjectsController {
     @Delete('member-evaluation/:id')
     async deleteEvaluation(@Param('id') id: string) {
         return this.projectsService.deleteEvaluation(+id);
+    }
+    @Public()
+    @Get(':id/delibration/defense-report')
+    async getDefenseReport(@Param('id') id: string) {
+        return this.projectsService.getDefenseReport(+id);
+    }
+    
+    @Public()
+    @Get(':id/delibration/diploma/:idMember')
+    async getDiploma(
+        @Param('id') id: string,
+        @Param('idMember') idMember: string,
+    ) {
+        return this.projectsService.getDiploma(+id, +idMember);
     }
 }
