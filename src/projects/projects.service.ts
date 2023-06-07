@@ -401,7 +401,40 @@ export class ProjectsService {
     async getProjectsForSupervisor(userId: number) {
         const projects = await this.prismaService.project.findMany({
             where: {
-                supervisors: { some: { id: userId } },
+                OR: [
+                    { supervisors: { some: { id: userId } } },
+                    { co_supervisor_id: userId },
+                ],
+            },
+            include: {
+                members: true,
+                supervisors: true,
+                validation: {
+                    orderBy: { created_at: 'desc' },
+                },
+                owner: true,
+                co_supervisor: true,
+                ProjectProgress: {
+                    orderBy: { created_at: 'desc' },
+                },
+            },
+        });
+
+        if (projects.length == 0)
+            throw new NotFoundException('No projects found');
+        return projects;
+    }
+
+    async getProjectsForJury(userId: number) {
+        const projects = await this.prismaService.project.findMany({
+            where: {
+                DefensePlanification: {
+                    OR: [
+                        { jury_president_id: userId },
+                        { jury_members: { some: { id: userId } } },
+                        { jury_invities: { some: { id: userId } } },
+                    ],
+                },
             },
             include: {
                 members: true,

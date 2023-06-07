@@ -37,11 +37,20 @@ export class UsersController {
     async createUser(
         @Body() createUserDto: CreateUserDto,
         @Query('invitation') invitation: string,
+        @Query('defensePlanId') defensePlan: string,
     ) {
-        if (invitation && invitation == 'true')
+        console.log(defensePlan, invitation);
+        if (invitation && invitation == 'true') {
+            if (defensePlan) {
+                return await this.usersService.createAccountWithDefensePlanInvite(
+                    createUserDto,
+                    defensePlan,
+                );
+            }
             return await this.usersService.createAccountWithProjectInvite(
                 createUserDto,
             );
+        }
         return await this.usersService.createUser(createUserDto);
     }
     @Get()

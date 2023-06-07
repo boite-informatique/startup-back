@@ -45,6 +45,10 @@ export class ProjectsController {
             return await this.projectsService.getProjectsForResponsableStage();
         }
 
+        if (type == 'jury') {
+            return await this.projectsService.getProjectsForJury(+req.user.sub);
+        }
+
         return await this.projectsService.getProjectsForOwnersOrMembers(
             +req.user.sub,
         );
@@ -229,7 +233,7 @@ export class ProjectsController {
     async getDefenseReport(@Param('id') id: string) {
         return this.projectsService.getDefenseReport(+id);
     }
-    
+
     @Public()
     @Get(':id/delibration/diploma/:idMember')
     async getDiploma(

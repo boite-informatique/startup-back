@@ -47,8 +47,8 @@ export class CreateUserDto {
     @ValidateNested()
     info: StudentDto | TeacherDto | StaffDto;
 
-    @Type(() => InvitationDto)
-    @ValidateNested()
+    // @Type(() => InvitationDto)
+    // @ValidateNested()
     @IsOptional()
-    invitation?: InvitationDto;
+    invitation?: any;
 }
