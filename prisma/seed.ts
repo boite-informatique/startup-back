@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
+import { users } from './users';
 
 const prisma = new PrismaClient();
 
@@ -15,6 +16,163 @@ async function main() {
                 validation: { start: '2023-05-08', end: '2023-05-14' },
                 appeal: { start: '2023-05-15', end: '2023-05-21' },
                 appealValidation: { start: '2023-05-22', end: '2023-05-28' },
+            },
+        },
+    });
+
+    await prisma.establishment.createMany({
+        data: [
+            { id: 1, name: 'esi sba' },
+            { id: 2, name: 'medecine sba' },
+            { id: 3, name: 'esi alger' },
+        ],
+    });
+
+    await prisma.filiere.createMany({
+        data: [
+            { id: 1, name: 'SC' },
+            { id: 2, name: 'CP' },
+        ],
+    });
+
+    await prisma.speciality.createMany({
+        data: [
+            { id: 1, name: 'MI' },
+            { id: 2, name: 'ST' },
+            { id: 3, name: 'Medecine' },
+        ],
+    });
+
+    await prisma.gradeTeacher.createMany({
+        data: [
+            { id: 1, name: 'Professor' },
+            { id: 2, name: 'Assistant Professor' },
+        ],
+    });
+
+    await prisma.gradeStaff.createMany({
+        data: [
+            { id: 1, name: 'Adminstrator' },
+            { id: 2, name: 'Manager' },
+        ],
+    });
+
+    await prisma.permission.createMany({
+        data: [
+            { id: 100, name: 'canManageAll' },
+            { id: 101, name: 'sc' },
+            { id: 102, name: 'rs' },
+            { id: 103, name: 'incubator' },
+        ],
+    });
+
+    await prisma.role.create({
+        data: {
+            id: 100,
+            name: 'admin',
+            permissions: { connect: [{ id: 100 }] },
+        },
+    });
+    await prisma.role.create({
+        data: {
+            id: 101,
+            name: 'scientific committee',
+            permissions: { connect: [{ id: 101 }] },
+        },
+    });
+    await prisma.role.create({
+        data: {
+            id: 102,
+            name: 'responsable stage',
+            permissions: { connect: [{ id: 102 }] },
+        },
+    });
+    await prisma.role.create({
+        data: {
+            id: 103,
+            name: 'incubator',
+            permissions: { connect: [{ id: 103 }] },
+        },
+    });
+
+    for (const user of users) {
+        await prisma.user.create({
+            data: user as any,
+        });
+    }
+
+    await prisma.project.create({
+        data: {
+            brand_name: 'innovium',
+            product_name: 'innovium ultra',
+            resume: 'innovium ultra is a new product that will change the world',
+            type: 'startup',
+            owner: { connect: { email: 'owner@esi-sba.dz' } },
+            supervisors: { connect: { email: 'supervisor@esi-sba.dz' } },
+            members: {
+                connect: [
+                    { email: 'member1@esi-sba.dz' },
+                    { email: 'member2@esi-sba.dz' },
+                ],
+            },
+            logo: 'project-logo.jpg',
+            validation: {
+                create: {
+                    decision: 'favorable',
+                    note: 'good project',
+                    validator: { connect: { email: 'sc@esi-sba.dz' } },
+                },
+            },
+            history: {
+                createMany: {
+                    data: {
+                        field: 'brand_name',
+                        old_value: 'innoviumss',
+                        new_value: 'innovium',
+                    },
+                },
+            },
+
+            DefenseAuthorization: {
+                create: {
+                    uploadedFile: 'defense-authorization.pdf',
+                    supervisor: { connect: { email: 'supervisor@esi-sba.dz' } },
+                },
+            },
+            DefenseDocument: {
+                create: {
+                    bmc: 'bmc.pdf',
+                    label: 'label.pdf',
+                    memoire: 'memoire.pdf',
+                },
+            },
+            ProjectInvitees: {
+                createMany: {
+                    data: [
+                        {
+                            email: 'meminv1@esi-sba.dz',
+                            type: 'member',
+                            token: 'token11',
+                        },
+                        {
+                            email: 'meminv2@esi-sba.dz',
+                            type: 'member',
+                            token: 'token11',
+                        },
+                        {
+                            email: 'invsup1@esi-sba.dz',
+                            type: 'co_supervisor',
+                            token: 'token11',
+                        },
+                    ],
+                },
+            },
+            ProjectProgress: {
+                create: {
+                    percentage: 50,
+                    user: { connect: { email: 'supervisor@esi-sba.dz' } },
+                    note: 'good progress',
+                },
             },
         },
     });

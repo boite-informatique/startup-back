@@ -152,7 +152,26 @@ export class UsersService {
                 },
                 type: { equals: userQueryDto.type },
             },
-            include: { roles: true, student: true, teacher: true, staff: true },
+            include: {
+                student: {
+                    include: {
+                        establishment: true,
+                        filiere: true,
+                        speciality: true,
+                    },
+                },
+                teacher: {
+                    include: {
+                        establishment: true,
+                        grade: true,
+                        speciality: true,
+                    },
+                },
+                roles: true,
+                staff: {
+                    include: { grade: true },
+                },
+            },
         });
         if (users.length === 0) {
             throw new UserNotFoundException();
