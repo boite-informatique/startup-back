@@ -229,8 +229,11 @@ export class ProjectsController {
         return this.projectsService.getDefenseReport(+id);
     }
 
-    @Get(':id/delibration/diploma')
-    async getDiploma(@Param('id') id: string, @Request() req) {
-        return this.projectsService.getDiploma(+id, +req.user.sub);
+    @Get(':id/delibration/diploma/:idMember')
+    async getDiploma(
+        @Param('id') id: string,
+        @Param('idMember') idMember: string,
+    ) {
+        return this.projectsService.getDiploma(+id, +idMember);
     }
 }

@@ -722,30 +722,54 @@ export class ProjectsService {
                     margin: 0;
                     padding: 20px;
                 }
+        
                 h1 {
                     text-align: center;
+                    margin-bottom: 30px;
                 }
+        
+                h2 {
+                    margin-top: 40px;
+                }
+        
                 h3 {
                     text-align: center;
+                    margin-bottom: 20px;
                 }
+        
                 table {
                     width: 100%;
                     border-collapse: collapse;
                     margin-bottom: 20px;
                 }
+        
                 th, td {
                     border: 1px solid #000;
-                    padding: 8px;
+                    padding: 10px;
+                }
+        
+                th {
+                    background-color: #f2f2f2;
+                }
+        
+                ul {
+                }
+        
+                .memberProject li,
+                .supervisors li,
+                .memberJury_list li,
+                .guestsJury_list li {
+                    margin-bottom: 5px;
                 }
             </style>
         </head>
         <body>
+        
             <h1>Project Defense Report</h1>
             <h3>{{dateDefense}}</h3>
         
             <h2>Project Details</h2>
             <table>
-              
                 <tr>
                     <th>Project Name</th>
                     <td>{{projectName}}</td>
@@ -763,34 +787,32 @@ export class ProjectsService {
                     <td>{{projectOwner.first_name}} {{projectOwner.last_name}}</td>
                 </tr>
                 <tr>
-                  <th>Project Members</th>
+                    <th>Project Members</th>
                     <td>
-                       <ul class="memberProject">
-                          {{#each memberProject}}
-                              <li>{{this.first_name}} {{this.last_name}}</li>
-                          {{/each}}
-                      </ul>
-                  </td>
+                        <ul class="memberProject">
+                            {{#each memberProject}}
+                                <li>{{this.first_name}} {{this.last_name}}</li>
+                            {{/each}}
+                        </ul>
+                    </td>
                 </tr>
             </table>
         
             <h2>Project Supervisors</h2>
             <table>
                 <tr>
-                    <th>Project Supervisor</th>
+                    <th>Project Supervisors</th>
                     <td>
-                    <ul class="supervisors">
-                   {{#each supervisors}}
-                    <li>{{this.first_name}} {{this.last_name}}</li>
-                   {{/each}}
-               </ul>
-               </td>                        
-               </tr>
+                        <ul class="supervisors">
+                            {{#each supervisors}}
+                                <li>{{this.first_name}} {{this.last_name}}</li>
+                            {{/each}}
+                        </ul>
+                    </td>
+                </tr>
                 <tr>
-                    <th>Co-Supervisors</th>
-                    <td>
-                    {{coSupervisor.first_name}} {{coSupervisor.last_name}}
-               </td>   
+                    <th>Co-Supervisor</th>
+                    <td>{{coSupervisor.first_name}} {{coSupervisor.last_name}}</td>
                 </tr>
             </table>
         
@@ -803,22 +825,22 @@ export class ProjectsService {
                 <tr>
                     <th>Jury Members</th>
                     <td>
-                    <ul class="memberJury_list">
-                   {{#each memberJury}}
-                    <li>{{this.first_name}} {{this.last_name}}</li>
-                   {{/each}}
-               </ul>
-               </td>                       
+                        <ul class="memberJury_list">
+                            {{#each memberJury}}
+                                <li>{{this.first_name}} {{this.last_name}}</li>
+                            {{/each}}
+                        </ul>
+                    </td>
                 </tr>
                 <tr>
                     <th>Guests</th>
                     <td>
-                    <ul class="guestsJury_list">
-                   {{#each guestsJury}}
-                    <li>{{this.first_name}} {{this.last_name}}</li>
-                   {{/each}}
-               </ul>
-               </td>                         
+                        <ul class="guestsJury_list">
+                            {{#each guestsJury}}
+                                <li>{{this.first_name}} {{this.last_name}}</li>
+                            {{/each}}
+                        </ul>
+                    </td>
                 </tr>
             </table>
         
@@ -830,16 +852,16 @@ export class ProjectsService {
                     <th>Appreciation</th>
                 </tr>
                 {{#each evaluations}}
-                <tr>
-                <td>{{this.member.first_name}} {{this.last_name}}</td>
-                <td>{{this.note}}</td>
-                <td>{{this.appreciation}}</td>
-            </tr>
+                    <tr>
+                        <td>{{this.member.first_name}} {{this.member.last_name}}</td>
+                        <td>{{this.note}}</td>
+                        <td>{{this.appreciation}}</td>
+                    </tr>
                 {{/each}}
             </table>
         </body>
-        </html>
-        `;
+        </html>`;
+
         const project = await this.prismaService.project.findUnique({
             where: { id: projectId },
             include: {
@@ -854,7 +876,6 @@ export class ProjectsService {
                                 member: true,
                             },
                         },
-                        reservation: true,
                     },
                 },
             },
@@ -873,7 +894,7 @@ export class ProjectsService {
         console.log();
         const template = Handlebars.compile(source);
         const data = {
-            dateDefense: defense.date,
+            dateDefense: defense.date.toUTCString().substring(0, 16),
             projectName: project.product_name,
             projectType: project.type,
             projectOwner: project.owner,
@@ -889,7 +910,7 @@ export class ProjectsService {
         return result;
     }
 
-    async getDiploma(projectId: number, userId: number) {
+    async getDiploma(projectId: number, memberId: number) {
         const source = `<!DOCTYPE html>
         <html>
             <head>
@@ -1002,7 +1023,7 @@ export class ProjectsService {
                             This is to certify that
                             <span class="recipient">{{recipient.first_name}} {{recipient.last_name}}</span> has
                             successfully completed the project 
-                            <span class="project">{{projectName}}</span>, type <span class="project">{{projectType}}</span> with the team <span class="project">{{brandName}}</span>.
+                            <span class="project">{{projectName}}</span>, as a  <span class="project">{{projectType}}</span> with the team <span class="project">{{brandName}}</span>.
                         </p>
                         <p>Presented on <span class="date">{{date}}</span>.</p>
                         <p>
@@ -1024,6 +1045,7 @@ export class ProjectsService {
         const project = await this.prismaService.project.findUnique({
             where: { id: projectId },
             include: {
+                members: true,
                 Delibration: {
                     include: {
                         evaluations: {
@@ -1036,7 +1058,7 @@ export class ProjectsService {
             },
         });
         const evaluation = project.Delibration.evaluations.find(
-            (obj) => obj.member_id == userId,
+            (obj) => obj.member_id == memberId,
         );
         const defense =
             await this.prismaService.defensePlanification.findUnique({
@@ -1047,11 +1069,9 @@ export class ProjectsService {
                     president: true,
                 },
             });
-        const recipient = await this.prismaService.user.findUnique({
-            where: {
-                id: userId,
-            },
-        });
+        const recipient = project.members.find(
+            (member) => member.id == memberId,
+        );
         const template = Handlebars.compile(source);
         const data = {
             recipient: recipient,
