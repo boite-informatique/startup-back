@@ -6,10 +6,12 @@ import {
     Patch,
     Param,
     Delete,
+    Query,
 } from '@nestjs/common';
 import { GradeStaffService } from './grade-staff.service';
 import { CreateGradeStaffDto } from './dto/create-grade-staff.dto';
 import { UpdateGradeStaffDto } from './dto/update-grade-staff.dto';
+import { Public } from 'src/iam/authentication/decorators/public.decorator';
 
 @Controller('grade-staff')
 export class GradeStaffController {
@@ -20,9 +22,10 @@ export class GradeStaffController {
         return this.gradeStaffService.createGradeStaff(createGradeStaffDto);
     }
 
+    @Public()
     @Get()
-    getAllGradeStaff() {
-        return this.gradeStaffService.getAllGradeStaff();
+    findAll(@Query('search') search: string) {
+        return this.gradeStaffService.getAllGradeStaff(search);
     }
 
     @Get(':id')

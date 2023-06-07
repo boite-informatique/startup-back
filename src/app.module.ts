@@ -14,7 +14,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { UploadModule } from './upload/upload.module';
 import { DefenseDocModule } from './defense-doc/defense-doc.module';
 import { ProjectProgressModule } from './project-progress/project-progress.module';
-import { EstablishmentsModule } from './establishments/establishments.module';
+import { EstablishmentsModule } from './referentiel/establishments/establishments.module';
 import { DefensePlanificationModule } from './defense-planification/defense-planification.module';
 import { AnnouncementModule } from './announcement/announcement.module';
 import { FiliereModule } from './referentiel/filiere/filiere.module';

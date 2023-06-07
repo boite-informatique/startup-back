@@ -6,10 +6,12 @@ import {
     Patch,
     Param,
     Delete,
+    Query,
 } from '@nestjs/common';
 import { SpecialityService } from './speciality.service';
 import { CreateSpecialityDto } from './dto/create-speciality.dto';
 import { UpdateSpecialityDto } from './dto/update-speciality.dto';
+import { Public } from 'src/iam/authentication/decorators/public.decorator';
 
 @Controller('speciality')
 export class SpecialityController {
@@ -20,9 +22,10 @@ export class SpecialityController {
         return this.specialityService.createSpeciality(createSpecialityDto);
     }
 
+    @Public()
     @Get()
-    getAllSpecialities() {
-        return this.specialityService.getAllSpecialities();
+    getAllSpecialities(@Query('search') search: string) {
+        return this.specialityService.getAllSpecialities(search);
     }
 
     @Get(':id')

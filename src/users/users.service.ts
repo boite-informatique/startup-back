@@ -165,10 +165,24 @@ export class UsersService {
         const user = await this.prismaServive.user.findUnique({
             where: { id },
             include: {
-                student: { include: { establishement: true } },
-                teacher: { include: { establishement: true } },
+                student: {
+                    include: {
+                        establishment: true,
+                        filiere: true,
+                        speciality: true,
+                    },
+                },
+                teacher: {
+                    include: {
+                        establishment: true,
+                        grade: true,
+                        speciality: true,
+                    },
+                },
                 roles: true,
-                staff: true,
+                staff: {
+                    include: { grade: true },
+                },
             },
         });
         if (!user) {

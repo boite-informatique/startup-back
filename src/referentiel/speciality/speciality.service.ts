@@ -15,8 +15,10 @@ export class SpecialityService {
         });
     }
 
-    async getAllSpecialities() {
-        return await this.prismaService.speciality.findMany();
+    async getAllSpecialities(search: string) {
+        return await this.prismaService.speciality.findMany({
+            where: { name: { contains: search, mode: 'insensitive' } },
+        });
     }
 
     async getOneSpeciality(id: number) {

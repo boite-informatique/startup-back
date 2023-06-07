@@ -14,8 +14,10 @@ export class GradeStaffService {
             },
         });
     }
-    async getAllGradeStaff() {
-        return await this.prismaService.gradeStaff.findMany();
+    async getAllGradeStaff(search: string) {
+        return await this.prismaService.gradeStaff.findMany({
+            where: { name: { contains: search, mode: 'insensitive' } },
+        });
     }
     async getOneGradeStaff(id: number) {
         return await this.prismaService.gradeStaff.findUnique({

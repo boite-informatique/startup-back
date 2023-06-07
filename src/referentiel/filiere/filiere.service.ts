@@ -15,8 +15,10 @@ export class FiliereService {
         });
     }
 
-    async getAllFiliere() {
-        return await this.prismaService.filiere.findMany();
+    async getAllFiliere(search: string) {
+        return await this.prismaService.filiere.findMany({
+            where: { name: { contains: search, mode: 'insensitive' } },
+        });
     }
 
     async getOneFiliere(id: number) {

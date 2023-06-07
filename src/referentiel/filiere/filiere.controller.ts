@@ -6,10 +6,12 @@ import {
     Patch,
     Param,
     Delete,
+    Query,
 } from '@nestjs/common';
 import { FiliereService } from './filiere.service';
 import { CreateFiliereDto } from './dto/create-filiere.dto';
 import { UpdateFiliereDto } from './dto/update-filiere.dto';
+import { Public } from 'src/iam/authentication/decorators/public.decorator';
 
 @Controller('filiere')
 export class FiliereController {
@@ -20,9 +22,10 @@ export class FiliereController {
         return this.filiereService.createFiliere(createFiliereDto);
     }
 
+    @Public()
     @Get()
-    findAll() {
-        return this.filiereService.getAllFiliere();
+    findAll(@Query('search') search: string) {
+        return this.filiereService.getAllFiliere(search);
     }
 
     @Get(':id')

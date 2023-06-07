@@ -99,7 +99,6 @@ model Staff {
 model Establishment {
   id       Int    @id @default(autoincrement())
   name     String
-  location String
 
   Student Student[]
   Teacher Teacher[]

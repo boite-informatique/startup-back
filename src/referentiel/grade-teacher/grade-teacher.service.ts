@@ -14,8 +14,10 @@ export class GradeTeacherService {
             },
         });
     }
-    async getAllGradeTeacher() {
-        return await this.prismaService.gradeTeacher.findMany();
+    async getAllGradeTeacher(search: string) {
+        return await this.prismaService.gradeTeacher.findMany({
+            where: { name: { contains: search, mode: 'insensitive' } },
+        });
     }
     async getOneGradeTeacher(id: number) {
         return await this.prismaService.gradeTeacher.findUnique({
