@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
@@ -40,7 +40,11 @@ export class AnnouncementService {
     async create(createAnnouncementDto: CreateAnnouncementDto) {
         return await this.prismaService.announcement.create({
             data: {
-                ...createAnnouncementDto,
+                title: createAnnouncementDto.title,
+                description: createAnnouncementDto.description,
+                dateStart: new Date(createAnnouncementDto.dateStart),
+                dateEnd: new Date(createAnnouncementDto.dateEnd),
+                image: createAnnouncementDto.image,
                 establishement: {
                     connect:
                         createAnnouncementDto.establishement.length > 0
@@ -61,21 +65,18 @@ export class AnnouncementService {
         });
     }
 
-    async update(id: number, updateAnnouncementDto: UpdateAnnouncementDto) {
+    async update(id: number, body: UpdateAnnouncementDto) {
         return await this.prismaService.announcement.update({
             where: { id },
             data: {
-                ...updateAnnouncementDto,
+                ...body,
+                dateStart: new Date(body.dateStart) || undefined,
+                dateEnd: new Date(body.dateEnd) || undefined,
                 establishement: {
-                    set:
-                        updateAnnouncementDto.establishement?.length > 0
-                            ? []
-                            : undefined,
-                    connect: updateAnnouncementDto.establishement?.map(
-                        (establishementId) => ({
-                            id: establishementId,
-                        }),
-                    ),
+                    set: body.establishement?.length > 0 ? [] : undefined,
+                    connect: body.establishement?.map((establishementId) => ({
+                        id: establishementId,
+                    })),
                 },
             },
         });

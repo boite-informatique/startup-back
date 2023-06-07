@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{title}}</title>
+    </head>
+    <style>
+        body {
+            background-image: url('Group\ 4.svg');
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+    </style>
+    <body>
+        <h1>{{greeting}}, {{name}}!</h1>
+        <ul>
+            {{#each items}}
+            <li>{{this}}</li>
+            {{/each}}
+        </ul>
+    </body>
+</html>

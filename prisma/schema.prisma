@@ -50,12 +50,15 @@ model User {
   project_jury_president      DefensePlanification[]
   project_jury_members        DefensePlanification[] @relation("jury_membership")
   peoject_jury_ivities        DefensePlanification[] @relation("invitation")
+  memberEvaluation Evaluation?
+
 }
 
 enum UserType {
   student
   teacher
   staff
+
 }
 
 model Student {
@@ -100,7 +103,6 @@ model Establishment {
 
   Student Student[]
   Teacher Teacher[]
-  Defense DefensePlanification[]
   announcements Announcement[]
 }
 
@@ -152,6 +154,8 @@ model Project {
   DefenseDocument      DefenseDocument?
   ProjectProgress      ProjectProgress[]
   DefensePlanification              DefensePlanification?
+  Delibration Delibration?
+  ProjectReserve ProjectReserve?
 }
 
 enum ProjectType {
@@ -255,18 +259,34 @@ model DefensePlanification {
   project_id Int     @unique
   project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
 
-  jury_president Int
-  president      User @relation(fields: [jury_president], references: [id])
+  jury_president_id Int?
+  president      User? @relation(fields: [jury_president_id], references: [id], onDelete: Cascade)
 
   jury_members User[] @relation("jury_membership")
 
   jury_invities User[] @relation("invitation")
 
   date              DateTime
-  establishment_id Int
-  establishment    Establishment @relation(fields: [establishment_id], references: [id])
+  location String?
   mode              DefenseMode
   nature            DefenseNature
+  DefenseInvitees   DefenseInvitees[]
+}
+
+model DefenseInvitees {
+id         Int @id @default(autoincrement())
+
+defensePlan_id  Int
+defensePlanification DefensePlanification @relation(fields: [defensePlan_id], references: [id], onDelete: Cascade)
+
+type DefenseInvitationType
+email String
+}
+
+enum DefenseInvitationType {
+    member
+    president
+    invite
 }
 
 enum ProjectInvitationType {
@@ -321,8 +341,44 @@ model Announcement {
     id                  Int       @id @default(autoincrement())
     title               String
     description         String
-    dateStart           DateTime
-    dateEnd             DateTime
-    establishment      Establishment[]
+    dateStart           DateTime @db.Date
+    dateEnd             DateTime @db.Date
+    establishement      Establishment[]
     image               String
+}
+
+model Delibration {
+    id          Int         @id @default(autoincrement())
+    project_id Int     @unique
+    project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)  
+    status DelibrationStatus
+    reservation ProjectReserve?
+    evaluations Evaluation[]
+
+    
+}
+enum DelibrationStatus {
+    accepted_with_reservation
+    accepted 
+    refused
+}
+model Evaluation {
+    id          Int         @id @default(autoincrement())
+    member_id Int @unique
+    member User @relation(fields: [member_id], references: [id], onDelete: Cascade)
+    delibration_id Int 
+    Delibration Delibration @relation(fields: [delibration_id],references: [id], onDelete: Cascade)
+    note Float 
+    appreciation String
+}
+model ProjectReserve {
+     id          Int         @id @default(autoincrement())
+     project_id Int     @unique
+     project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)  
+     delibration_id Int @unique
+     Delibration Delibration @relation(fields: [delibration_id],references: [id])
+     description String
+     documents String[]
+     reserveLifting Boolean @default(false)
+     
 }

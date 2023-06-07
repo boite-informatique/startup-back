@@ -2,15 +2,35 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateCommentDto } from 'src/projects/dto/create-comment.dto.';
 
 @Injectable()
 export class TasksService {
+    async createComment(
+        taskId: number,
+        body: CreateCommentDto,
+        userId: number,
+    ) {
+        try {
+            return await this.prismaService.comment.create({
+                data: {
+                    task_id: taskId,
+                    author_id: userId,
+                    body: body.body,
+                },
+            });
+        } catch (_) {}
+    }
     constructor(private readonly prismaService: PrismaService) {}
 
     async findOne(id: number) {
         const task = await this.prismaService.projectTask.findUnique({
             where: { id },
-            include: { TaskFinished: true, comments: true, user: true },
+            include: {
+                TaskFinished: true,
+                comments: { include: { author: true } },
+                user: true,
+            },
         });
 
         if (task) return task;

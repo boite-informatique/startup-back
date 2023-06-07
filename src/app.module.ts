@@ -21,6 +21,7 @@ import { FiliereModule } from './referentiel/filiere/filiere.module';
 import { SpecialityModule } from './referentiel/speciality/speciality.module';
 import { GradeStaffModule } from './referentiel/grade-staff/grade-staff.module';
 import { GradeTeacherModule } from './referentiel/grade-teacher/grade-teacher.module';
+import { ProjectDelibrationModule } from './project-delibration/project-delibration.module';
 
 @Module({
     imports: [
@@ -55,6 +56,7 @@ import { GradeTeacherModule } from './referentiel/grade-teacher/grade-teacher.mo
         SpecialityModule,
         GradeStaffModule,
         GradeTeacherModule,
+        ProjectDelibrationModule,
     ],
     providers: [
         {

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { IsBooleanString } from 'class-validator';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateDefencePlanificationDto } from './dto/update-defense-planification.dto';
 
@@ -31,16 +32,18 @@ export class DefensePlanificationService {
                 id,
             },
             data: {
-                jury_president: body.jury_president,
+                president: {
+                    connect: { email: body.jury_president },
+                },
                 jury_members: {
                     set: body.jury_members?.length > 0 ? [] : undefined,
-                    connect: body.jury_members?.map((m) => ({ id: m })),
+                    connect: body.jury_members?.map((email) => ({ email })),
                 },
                 jury_invities: {
                     set: body.jury_invities?.length > 0 ? [] : undefined,
-                    connect: body.jury_invities?.map((inv) => ({ id: inv })),
+                    connect: body.jury_invities?.map((email) => ({ email })),
                 },
-                establishement_id: body.establishement_id,
+                location: body.location,
                 date: body.date,
                 mode: body.mode,
                 nature: body.nature,
