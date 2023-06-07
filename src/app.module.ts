@@ -14,9 +14,13 @@ import { TasksModule } from './tasks/tasks.module';
 import { UploadModule } from './upload/upload.module';
 import { DefenseDocModule } from './defense-doc/defense-doc.module';
 import { ProjectProgressModule } from './project-progress/project-progress.module';
-import { EstablishmentsModule } from './establishments/establishments.module';
+import { EstablishmentsModule } from './referentiel/establishments/establishments.module';
 import { DefensePlanificationModule } from './defense-planification/defense-planification.module';
 import { AnnouncementModule } from './announcement/announcement.module';
+import { FiliereModule } from './referentiel/filiere/filiere.module';
+import { SpecialityModule } from './referentiel/speciality/speciality.module';
+import { GradeStaffModule } from './referentiel/grade-staff/grade-staff.module';
+import { GradeTeacherModule } from './referentiel/grade-teacher/grade-teacher.module';
 import { ProjectDelibrationModule } from './project-delibration/project-delibration.module';
 
 @Module({
@@ -48,6 +52,10 @@ import { ProjectDelibrationModule } from './project-delibration/project-delibrat
         EstablishmentsModule,
         DefensePlanificationModule,
         AnnouncementModule,
+        FiliereModule,
+        SpecialityModule,
+        GradeStaffModule,
+        GradeTeacherModule,
         ProjectDelibrationModule,
     ],
     providers: [

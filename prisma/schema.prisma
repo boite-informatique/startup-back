@@ -66,9 +66,13 @@ model Student {
   user             User          @relation(fields: [id], references: [id], onDelete: Cascade)
   registration_num String
   establishment_id Int
-  establishement   Establishment @relation(fields: [establishment_id], references: [id])
-  filiere          String
-  specialty        String
+  establishment   Establishment @relation(fields: [establishment_id], references: [id])
+
+  filiere_id       Int
+  filiere          Filiere @relation(fields: [filiere_id], references: [id])
+
+  speciality_id    Int
+  speciality       Speciality @relation(fields: [speciality_id], references: [id])
 }
 
 model Teacher {
@@ -76,25 +80,54 @@ model Teacher {
   user             User          @relation(fields: [id], references: [id], onDelete: Cascade)
   registration_num String
   establishment_id Int
-  establishement   Establishment @relation(fields: [establishment_id], references: [id])
-  grade            String
-  specialty        String
+  establishment   Establishment @relation(fields: [establishment_id], references: [id])
+
+  grade_id Int
+  grade GradeTeacher @relation(fields: [grade_id], references: [id])  
+
+  speciality_id        Int
+  speciality Speciality @relation(fields: [speciality_id], references: [id])
 }
 
 model Staff {
   id    Int    @id
   user  User   @relation(fields: [id], references: [id], onDelete: Cascade)
-  grade String
+  grade_id Int
+  grade GradeStaff @relation(fields: [grade_id], references: [id])
 }
 
 model Establishment {
   id       Int    @id @default(autoincrement())
   name     String
-  location String
 
   Student Student[]
   Teacher Teacher[]
   announcements Announcement[]
+}
+
+model Filiere {
+  id        Int @id @default(autoincrement())
+  name      String
+  Student   Student[]  
+}
+
+model Speciality {
+    id          Int @id @default(autoincrement())
+    name        String
+    Student     Student[]
+    Teacher     Teacher[]
+}
+
+model GradeTeacher {
+ id         Int @id @default(autoincrement())
+ name       String
+ Teacher    Teacher[]
+}
+
+model GradeStaff {
+  id        Int @id @default(autoincrement())
+  name      String
+  Staff     Staff[]
 }
 
 model Project {
