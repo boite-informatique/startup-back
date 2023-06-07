@@ -593,158 +593,6 @@ export class ProjectsService {
         projectId: number,
         body: CreateProjectDelibrationDto,
     ) {
-        const source = `<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Project Defense Report</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 20px;
-                }
-                h1 {
-                    text-align: center;
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-bottom: 20px;
-                }
-                th, td {
-                    border: 1px solid #000;
-                    padding: 8px;
-                }
-            </style>
-        </head>
-        <body>
-            <h1>Project Defense Report</h1>
-            <h3>{{dateDefense}}</h3>
-        
-            <h2>Project Details</h2>
-            <table>
-              
-                <tr>
-                    <th>Project Name</th>
-                    <td>{{projectName}}</td>
-                </tr>
-                <tr>
-                    <th>Project Type</th>
-                    <td>{{projectType}}</td>
-                </tr>
-            </table>
-        
-            <h2>Project Members</h2>
-            <table>
-                <tr>
-                    <th>Project Owner</th>
-                    <td>{{projectOwner}}</td>
-                </tr>
-                <tr>
-                  <th>Project Members</th>
-                    <td>
-                       <ul class="memberProject">
-                          {{#each memberProject}}
-                              <li>{{first_name}} {{last_name}}</li>
-                          {{/each}}
-                      </ul>
-                  </td>
-                </tr>
-            </table>
-        
-            <h2>Project Supervisors</h2>
-            <table>
-                <tr>
-                    <th>Project Supervisor</th>
-                    <td>
-                    <ul class="supervisors">
-                   {{#each supervisors}}
-                    <li>{{this.first_name}}+{{this.last_name}}</li>
-                   {{/each}}
-               </ul>
-               </td>                        
-               </tr>
-                <tr>createProjectDelibrationDto.
-                    <th>Co-Supervisor</th>
-                    <td>
-                    <ul class="coSupervisors">
-                   {{#each coSupervisors}}
-                    <li>{{this.first_name}}+{{this.last_name}}</li>
-                   {{/each}}
-               </ul>
-               </td>   
-                </tr>
-            </table>
-        
-            <h2>Defense Jury</h2>
-            <table>
-                <tr>
-                    <th>Jury President</th>
-                    <td>{{juryPresident}}</td>
-                </tr>
-                <tr>
-                    <th>Jury Members</th>
-                    <td>
-                    <ul class="memberJury_list">
-                   {{#each memberJury}}
-                    <li>{{this.first_name}}+{{this.last_name}}</li>
-                   {{/each}}
-               </ul>
-               </td>                       
-                </tr>
-                <tr>
-                    <th>Guests</th>
-                    <td>
-                    <ul class="guestsJury_list">
-                   {{#each guestsJury}}
-                    <li>{{this.first_name}}+{{this.last_name}}</li>
-                   {{/each}}
-               </ul>
-               </td>                         
-                </tr>
-            </table>
-        
-            <h2>Evaluation Results</h2>
-            <table>
-                <tr>
-                    <th>Member</th>
-                    <th>Grade</th>
-                    <th>Appreciation</th>
-                </tr>
-                {{#each evaluations}}
-                <tr>
-                <td>{{this.member.first_name}}+{{this.last_name}}</td>
-                <td>{{this.note}}</td>
-                <td>{{this.appreciation}}</td>
-            </tr>
-                {{/each}}
-            </table>
-        </body>
-        </html>
-        `;
-        const project = await this.prismaService.project.findUnique({
-            where: { id: projectId },
-            include: {
-                owner: true,
-                members: true,
-                supervisors: true,
-                Delibration: true,
-            },
-        });
-        const defense =
-            await this.prismaService.defensePlanification.findUnique({
-                where: {
-                    project_id: projectId,
-                },
-                include: {
-                    president: true,
-                    jury_invities: true,
-                    jury_members: true,
-                },
-            });
-
         try {
             const delibration = await this.prismaService.delibration.create({
                 data: {
@@ -758,24 +606,6 @@ export class ProjectsService {
                 },
             });
 
-            const template = Handlebars.compile(source);
-            const data = {
-                dateDefense: `${defense.date}`,
-                projectName: `${project.product_name}`,
-                projectType: `${project.type}`,
-                projectOwner: `${project.owner.first_name} + ' ' + ${project.owner.last_name}`,
-                memberProject: `${project.members}`,
-                supervisors: `${project.supervisors}`,
-                coSupervisors: `${project.co_supervisor_id}`,
-                juryPresident: `${defense.president.first_name} + ' ' + ${defense.president.last_name}`,
-                memberJury: `${defense.jury_members}`,
-                guestsJury: `${defense.jury_invities}`,
-                evaluation: `${body.evaluations}`,
-            };
-            const result = template(data);
-            console.log(project.members);
-            console.log(project.supervisors);
-            console.log(result);
             return delibration;
         } catch (error) {
             throw new Error(error);
@@ -877,5 +707,363 @@ export class ProjectsService {
         } catch (err) {
             throw new NotFoundException();
         }
+    }
+
+    async getDefenseReport(projectId: number) {
+        const source = `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Project Defense Report</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                }
+                h1 {
+                    text-align: center;
+                }
+                h3 {
+                    text-align: center;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 20px;
+                }
+                th, td {
+                    border: 1px solid #000;
+                    padding: 8px;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Project Defense Report</h1>
+            <h3>{{dateDefense}}</h3>
+        
+            <h2>Project Details</h2>
+            <table>
+              
+                <tr>
+                    <th>Project Name</th>
+                    <td>{{projectName}}</td>
+                </tr>
+                <tr>
+                    <th>Project Type</th>
+                    <td>{{projectType}}</td>
+                </tr>
+            </table>
+        
+            <h2>Project Members</h2>
+            <table>
+                <tr>
+                    <th>Project Owner</th>
+                    <td>{{projectOwner.first_name}} {{projectOwner.last_name}}</td>
+                </tr>
+                <tr>
+                  <th>Project Members</th>
+                    <td>
+                       <ul class="memberProject">
+                          {{#each memberProject}}
+                              <li>{{this.first_name}} {{this.last_name}}</li>
+                          {{/each}}
+                      </ul>
+                  </td>
+                </tr>
+            </table>
+        
+            <h2>Project Supervisors</h2>
+            <table>
+                <tr>
+                    <th>Project Supervisor</th>
+                    <td>
+                    <ul class="supervisors">
+                   {{#each supervisors}}
+                    <li>{{this.first_name}} {{this.last_name}}</li>
+                   {{/each}}
+               </ul>
+               </td>                        
+               </tr>
+                <tr>
+                    <th>Co-Supervisors</th>
+                    <td>
+                    {{coSupervisor.first_name}} {{coSupervisor.last_name}}
+               </td>   
+                </tr>
+            </table>
+        
+            <h2>Defense Jury</h2>
+            <table>
+                <tr>
+                    <th>Jury President</th>
+                    <td>{{juryPresident.first_name}} {{juryPresident.last_name}}</td>
+                </tr>
+                <tr>
+                    <th>Jury Members</th>
+                    <td>
+                    <ul class="memberJury_list">
+                   {{#each memberJury}}
+                    <li>{{this.first_name}} {{this.last_name}}</li>
+                   {{/each}}
+               </ul>
+               </td>                       
+                </tr>
+                <tr>
+                    <th>Guests</th>
+                    <td>
+                    <ul class="guestsJury_list">
+                   {{#each guestsJury}}
+                    <li>{{this.first_name}} {{this.last_name}}</li>
+                   {{/each}}
+               </ul>
+               </td>                         
+                </tr>
+            </table>
+        
+            <h2>Evaluation Results</h2>
+            <table>
+                <tr>
+                    <th>Member</th>
+                    <th>Grade</th>
+                    <th>Appreciation</th>
+                </tr>
+                {{#each evaluations}}
+                <tr>
+                <td>{{this.member.first_name}} {{this.last_name}}</td>
+                <td>{{this.note}}</td>
+                <td>{{this.appreciation}}</td>
+            </tr>
+                {{/each}}
+            </table>
+        </body>
+        </html>
+        `;
+        const project = await this.prismaService.project.findUnique({
+            where: { id: projectId },
+            include: {
+                owner: true,
+                members: true,
+                supervisors: true,
+                co_supervisor: true,
+                Delibration: {
+                    include: {
+                        evaluations: {
+                            include: {
+                                member: true,
+                            },
+                        },
+                        reservation: true,
+                    },
+                },
+            },
+        });
+        const defense =
+            await this.prismaService.defensePlanification.findUnique({
+                where: {
+                    project_id: projectId,
+                },
+                include: {
+                    president: true,
+                    jury_invities: true,
+                    jury_members: true,
+                },
+            });
+        console.log();
+        const template = Handlebars.compile(source);
+        const data = {
+            dateDefense: defense.date,
+            projectName: project.product_name,
+            projectType: project.type,
+            projectOwner: project.owner,
+            memberProject: project.members,
+            supervisors: project.supervisors,
+            coSupervisor: project.co_supervisor,
+            juryPresident: defense.president,
+            memberJury: defense.jury_members,
+            guestsJury: defense.jury_invities,
+            evaluations: project.Delibration.evaluations,
+        };
+        const result = template(data);
+        return result;
+    }
+
+    async getDiploma(projectId: number, userId: number) {
+        const source = `<!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset="UTF-8" />
+                <title>Diploma</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f9f9f9;
+                    }
+                    .diploma {
+                        background-repeat: no-repeat;
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 40px;
+                        border: 2px solid #000;
+                        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+                        background-position: center;
+                        background-color: rgba(0, 0, 0, 0.04);
+                    }
+        
+                    .header {
+                        text-align: center;
+                        margin-bottom: 30px;
+                    }
+                    .algeria-text {
+                        text-align: center;
+                        font-size: 24px;
+                        font-weight: bold;
+                        margin-bottom: 5px;
+                    }
+                    .ministry {
+                        text-align: center;
+                        font-size: large 20px;
+                        font-weight: bold;
+        
+                        margin-bottom: 30px;
+                    }
+        
+                    .title {
+                        font-size: 30px;
+                        font-weight: bold;
+                        margin-bottom: 20px;
+                    }
+        
+                    .subtitle {
+                        font-size: 18px;
+                        margin-bottom: 10px;
+                    }
+        
+                    .recipient {
+                        font-size: 18px;
+                        font-weight: bold;
+                        margin-bottom: 40px;
+                        text-align: center;
+                    }
+        
+                    .content {
+                        margin-bottom: 40px;
+                        text-align: justify;
+                    }
+        
+                    .date {
+                        margin-bottom: 10px;
+                    }
+                    .project {
+                        font-weight: bold;
+                    }
+        
+                    .signature {
+                        text-align: right;
+                    }
+        
+                    .signature img {
+                        width: 180px;
+                        height: auto;
+                    }
+        
+                    .signature p {
+                        margin: 5px 0;
+                        font-weight: bold;
+                    }
+        
+                    .footer {
+                        font-size: 14px;
+                        text-align: center;
+                        margin-top: 30px;
+                    }
+                    p {
+                        font-weight: 500;
+                        font-size: medium;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="diploma">
+                    <div class="header">
+                        <div class="algeria-text">
+                            People's Democratic Republic of Algeria
+                        </div>
+                        <div class="ministry">
+                            Ministry of Higher Education and Scientific Research
+                        </div>
+                        <div class="title">Defense Diploma</div>
+                        <div class="subtitle">Awarded to</div>
+                        <div class="recipient">{{recipient.first_name}} {{recipient.last_name}}</div>
+                    </div>
+                    <div class="content">
+                        <p class="text">
+                            This is to certify that
+                            <span class="recipient">{{recipient.first_name}} {{recipient.last_name}}</span> has
+                            successfully completed the project 
+                            <span class="project">{{projectName}}</span>, type <span class="project">{{projectType}}</span> with the team <span class="project">{{brandName}}</span>.
+                        </p>
+                        <p>Presented on <span class="date">{{date}}</span>.</p>
+                        <p>
+                            Appreciation:
+                            <span class="appreciation">{{appreciation}}</span>.
+                        </p>
+                    </div>
+                    <div class="signature">
+                        <img src="signature.png" alt="Signature" />
+                        <p>Dr. {{juryPresident.first_name}} {{juryPresident.last_name}}</p>
+                        <p>Jury President</p>
+                    </div>
+                    <div class="footer">&copy; {{year}}</div>
+                </div>
+            </body>
+        </html>
+        
+        `;
+        const project = await this.prismaService.project.findUnique({
+            where: { id: projectId },
+            include: {
+                Delibration: {
+                    include: {
+                        evaluations: {
+                            include: {
+                                member: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        const evaluation = project.Delibration.evaluations.find(
+            (obj) => obj.member_id == userId,
+        );
+        const defense =
+            await this.prismaService.defensePlanification.findUnique({
+                where: {
+                    project_id: projectId,
+                },
+                include: {
+                    president: true,
+                },
+            });
+        const recipient = await this.prismaService.user.findUnique({
+            where: {
+                id: userId,
+            },
+        });
+        const template = Handlebars.compile(source);
+        const data = {
+            recipient: recipient,
+            projectName: project.product_name,
+            projectType: project.type,
+            brandName: project.brand_name,
+            date: defense.date.toUTCString().substring(0, 16),
+            juryPresident: defense.president,
+            year: defense.date.getFullYear(),
+            appreciation: evaluation.appreciation,
+        };
+        const result = template(data);
+        return result;
     }
 }

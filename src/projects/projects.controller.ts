@@ -223,4 +223,14 @@ export class ProjectsController {
     async deleteEvaluation(@Param('id') id: string) {
         return this.projectsService.deleteEvaluation(+id);
     }
+
+    @Get(':id/delibration/defense-report')
+    async getDefenseReport(@Param('id') id: string) {
+        return this.projectsService.getDefenseReport(+id);
+    }
+
+    @Get(':id/delibration/diploma')
+    async getDiploma(@Param('id') id: string, @Request() req) {
+        return this.projectsService.getDiploma(+id, +req.user.sub);
+    }
 }
