@@ -28,7 +28,10 @@ export class TasksService {
             where: { id },
             include: {
                 TaskFinished: true,
-                comments: { include: { author: true } },
+                comments: {
+                    include: { author: true },
+                    orderBy: { created_at: 'desc' },
+                },
                 user: true,
             },
         });
