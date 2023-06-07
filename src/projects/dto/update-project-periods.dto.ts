@@ -1,18 +1,28 @@
-import { IsDateString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDateString, ValidateNested } from 'class-validator';
 
-export class UpdateProjectPeriodsDto {
+export class Period {
     @IsDateString()
-    submission: string;
-
-    @IsDateString()
-    validation: string;
-
-    @IsDateString()
-    appeal: string;
-
-    @IsDateString()
-    appealValidation: string;
+    start: string;
 
     @IsDateString()
     end: string;
+}
+
+export class UpdateProjectPeriodsDto {
+    @Type(() => Period)
+    @ValidateNested()
+    submission: Period;
+
+    @Type(() => Period)
+    @ValidateNested()
+    validation: Period;
+
+    @Type(() => Period)
+    @ValidateNested()
+    appeal: Period;
+
+    @Type(() => Period)
+    @ValidateNested()
+    appealValidation: Period;
 }
