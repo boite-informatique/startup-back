@@ -9,7 +9,8 @@ import {
 } from 'class-validator';
 
 export class CreateProjectDto {
-    @IsString()
+    @IsString() 
+    
     resume: string;
 
     @IsString()
