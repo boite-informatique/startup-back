@@ -183,8 +183,8 @@ async function main() {
             image: 'annonce1.jpg',
             description:
                 'Training on the technical-economic study as part of the planning of entrepreneurial projects',
-            dateStart: '2023-06-05',
-            dateEnd: '2024-06-05',
+            dateStart: new Date('2023-06-05'),
+            dateEnd: new Date('2024-06-05'),
             establishement: { connect: { id: 1 } },
         },
     });
@@ -195,8 +195,8 @@ async function main() {
             image: 'annonce1.jpg',
             description:
                 'Training on the technical-economic study as part of the planning of entrepreneurial projects',
-            dateStart: '2023-06-05',
-            dateEnd: '2024-06-05',
+            dateStart: new Date('2023-06-05'),
+            dateEnd: new Date('2024-06-05'),
             establishement: { connect: { id: 1 } },
         },
     });
