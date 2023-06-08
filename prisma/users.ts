@@ -81,6 +81,26 @@ export const users = [
         },
     },
 
+    {
+        email: 'president@esi-sba.dz',
+        password: password12346,
+        first_name: 'abdelkader',
+        last_name: 'kerhal',
+        date_of_birth: new Date('1988-03-19'),
+        phone: '0557598040',
+        type: 'teacher',
+        activated: true,
+        avatar: '',
+        teacher: {
+            create: {
+                registration_num: 'es202036016498',
+                establishment_id: 1,
+                grade_id: 1,
+                speciality_id: 1,
+            },
+        },
+    },
+
     // admin
     {
         email: 'admin@esi-sba.dz',
